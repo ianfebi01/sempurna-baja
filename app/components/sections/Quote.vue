@@ -7,7 +7,7 @@
           cite="https://www.example.com/artikel"
           class="text-3xl text-center opacity-0 scale-75">
           <Icon name="fa7-solid:quote-left" />
-          Misi kami adalah menghadirkan keindahan alami ke dalam rumah, taman, dan bangunan Anda.
+          Kami percaya, setiap proyek — besar atau kecil — layak mendapatkan hasil terbaik dari material dan pemasangan yang sempurna.
           <Icon name="fa7-solid:quote-right" />
         </blockquote>
       </div>
@@ -35,7 +35,7 @@ onMounted( async () => {
         const tl = gsap.timeline( {
             scrollTrigger: {
                 trigger       : containerRef.value,
-                start         : "bottom 100%",
+                start         : "top 100%",
                 toggleActions : "play none none none",
             },
         } )
