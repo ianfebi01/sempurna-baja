@@ -3,12 +3,12 @@
     <div class="h-full main-container flex flex-col md:flex-row md:items-center gap-8 py-16 md:py-20">
       <div ref="textRef" class="flex flex-col max-w-2xl opacity-0 translate-y-8">
         <div class="flex flex-col justify-center grow">
-          <h1 class="mt-0 text-2xl md:text-5xl mb-4">Percantik Hunian Anda dengan Batu Alam Berkualitas</h1>
+          <h1 class="mt-0 text-2xl md:text-5xl mb-4">Solusi Baja Ringan & Galvalum untuk Segala Proyek</h1>
           <h2 ref="headingRef" class="text-xl md:text-2xl font-normal"></h2>
           <div class="flex items-center gap-6 md:gap-8 mt-8 md:mt-16 flex-wrap">
             <NuxtLink :to="`https://wa.me/6281999980596`" class="button button-primary">
               <Icon name="fa7-solid:paper-plane" />
-              Konsultasi Gratis
+              Chat WhatsApp
             </NuxtLink>
             <NuxtLink :to="`/#katalog`" class="button button-secondary">
               <Icon name="fa7-solid:images" />
@@ -19,7 +19,7 @@
       </div>
       <div ref="imageRef" class="overflow-hidden aspect-square rounded-2xl relative opacity-0 translate-y-8">
         <img
-          src="/images/batu-alam/batu-alam-15.webp"
+          src="/images/sempurna-baja-5.webp"
           alt="Batu alam 15"
           width="500"
           height="500"
@@ -32,7 +32,7 @@
           </div>
           <div class="p-4 lg:p-8 relative z-[1] mt-4">
             <p class="h2 m-0">Sempurna Baja</p>
-            <p class="m-0">Jasa Pemasangan Batu Alam</p>
+            <p class="m-0">Galvalum 0.30</p>
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@ onMounted( async () => {
         if ( headingRef.value ) {
             tl.to( headingRef.value, {
                 duration : 2,
-                text     : "Sempurna Baja menyediakan jasa pemasangan profesional dan bahan batu alam terbaik langsung dari Gunungkidul.", // your text
+                text     : "Material lengkap (galvalum, channal, reng, plafon, genteng pasir) + jasa pemasangan profesional. Gratis ongkir area Gunungkidul, survey & estimasi kebutuhan tanpa biaya.", // your text
                 ease     : "none",
             } )
         }
