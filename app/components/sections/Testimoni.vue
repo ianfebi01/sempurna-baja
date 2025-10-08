@@ -9,7 +9,7 @@
           cite="https://www.example.com/artikel"
           class="text-2xl text-center mb-8 max-w-2xl mx-auto opacity-0 scale-75">
           <Icon name="fa7-solid:quote-left" />
-          Hasil pemasangan sangat rapi, rumah jadi terlihat lebih alami dan elegan.
+          Hasil pemasangan sangat rapidan cepat, rumah jadi lebih rapi dengan plafon PVC.
           <Icon name="fa7-solid:quote-right" />
         </blockquote>
         <div class="flex items-center gap-2 text-yellow-300 justify-center mb-8">
@@ -48,7 +48,7 @@ onMounted( async () => {
         const tl = gsap.timeline( {
             scrollTrigger: {
                 trigger       : containerRef.value,
-                start         : "bottom 75%",
+                start         : "top 100%",
                 toggleActions : "play none none none",
             },
         } )
