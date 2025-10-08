@@ -3,41 +3,44 @@
     <div class="main-container p-20">
       <h2 class="h1 mt-0 text-center mb-12">Tentang Kami</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div :ref="el => itemsRef[0] = (el as HTMLDivElement)" class="opacity-0 translate-y-8">
+        <div :ref="el => itemsRef[0] = (el as HTMLDivElement)" class="opacity-0 translate-y-8 h-full">
           <div
-            class="bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default p-8 text-center rounded-xl">
-            <div class="overflow-hidden p-6">
-              <img
-                src="@/assets/images/calendar-31.svg"
-                alt="calendar"
-                class="w-full h-full object-contain object-center" />
-            </div>
-            <p>Berpengalaman dalam pemasangan batu alam sejak bertahun-tahun</p>
-          </div>
-        </div>
-        <div :ref="el => itemsRef[1] = (el as HTMLDivElement)" class="opacity-0 translate-y-8">
-          <div
-            class="bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default p-8 text-center rounded-xl">
+            class="bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default p-8 text-center rounded-xl h-full">
             <div class="overflow-hidden p-6">
               <img
                 src="@/assets/images/map-65.svg"
                 alt="map"
                 class="w-full h-full object-contain object-center" />
             </div>
-            <p>Lokasi strategis di Semanu, Gunungkidul (sentra batu alam Yogyakarta)</p>
+            <h3>Gratis Ongkir Area Gunungkidul</h3>
+            <p>Pengiriman cepat ke Wonosari, Playen, Karangmojo, Semanu, Panggang, Paliyan, dan sekitarnya.</p>
+          </div>
+        </div>
+        <div :ref="el => itemsRef[1] = (el as HTMLDivElement)" class="opacity-0 translate-y-8">
+          <div
+            class="bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default p-8 text-center rounded-xl h-full">
+            <div class="overflow-hidden p-6">
+              <img
+                src="@/assets/images/construction-worker-27.svg"
+                alt="construction-worker"
+                class="w-full h-full object-contain object-center" />
+            </div>
+            <h3>Jasa Pasang Profesional</h3>
+            <p>Tenaga berpengalaman, rapi, tepat waktu, dan bergaransi.</p>
           </div>
         </div>
         <div :ref="el => itemsRef[2] = (el as HTMLDivElement)" class="opacity-0 translate-y-8">
 
           <div
-            class="bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default p-8 text-center rounded-xl">
+            class="bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default p-8 text-center rounded-xl h-full">
             <div class="overflow-hidden p-6">
               <img
-                src="@/assets/images/real-estate-agent-8.svg"
-                alt="real-estate-agent"
+                src="@/assets/images/checklist-1-7.svg"
+                alt="checklist"
                 class="w-full h-full object-contain object-center" />
             </div>
-            <p>Menyediakan berbagai jenis batu alam dengan kualitas terjamin</p>
+            <h3>Material Berkualitas</h3>
+            <p>Pilihan merek tepercaya seperti Zenium & Java Pasific.</p>
           </div>
         </div>
       </div>
