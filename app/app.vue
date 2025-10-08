@@ -10,8 +10,8 @@
 <script lang="ts" setup>
 const config = useRuntimeConfig()
 const siteName = config.public.siteName
-const title = siteName || "Ragil Stone | Jasa Pemasangan Batu Alam"
-const description = "Ragil Stone menyediakan jasa pemasangan profesional dan bahan batu alam terbaik langsung dari Gunungkidul."
+const title = siteName || "Sempurna Baja – Baja Ringan & Galvalum | Gratis Ongkir"
+const description = "Toko & jasa pasang baja ringan, galvalum, channal, reng, plafon di Wonosari. Gratis ongkir Gunungkidul. Survey & estimasi gratis. WA +62 831-4451-2987."
 useHead( {
   htmlAttrs: {
     lang: "id",

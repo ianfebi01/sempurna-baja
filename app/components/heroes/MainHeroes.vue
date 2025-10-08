@@ -31,7 +31,7 @@
           <div class="absolute w-full bottom-0 bg-gradient-to-t from-[#000]/80 to-transparent h-full z-0">
           </div>
           <div class="p-4 lg:p-8 relative z-[1] mt-4">
-            <p class="h2 m-0">Ragil Stone</p>
+            <p class="h2 m-0">Sempurna Baja</p>
             <p class="m-0">Jasa Pemasangan Batu Alam</p>
           </div>
         </div>
@@ -90,7 +90,7 @@ onMounted( async () => {
         if ( headingRef.value ) {
             tl.to( headingRef.value, {
                 duration : 2,
-                text     : "Ragil Stone menyediakan jasa pemasangan profesional dan bahan batu alam terbaik langsung dari Gunungkidul.", // your text
+                text     : "Sempurna Baja menyediakan jasa pemasangan profesional dan bahan batu alam terbaik langsung dari Gunungkidul.", // your text
                 ease     : "none",
             } )
         }
