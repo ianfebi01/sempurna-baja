@@ -6,7 +6,7 @@
           <h1 class="mt-0 text-2xl md:text-5xl mb-4">Solusi Baja Ringan & Galvalum untuk Segala Proyek</h1>
           <h2 ref="headingRef" class="text-xl md:text-2xl font-normal"></h2>
           <div class="flex items-center gap-6 md:gap-8 mt-8 md:mt-16 flex-wrap">
-            <NuxtLink :to="`https://wa.me/6281999980596`" class="button button-primary">
+            <NuxtLink :to="`https://wa.me/6283144512987`" class="button button-primary">
               <Icon name="fa7-solid:paper-plane" />
               Chat WhatsApp
             </NuxtLink>
