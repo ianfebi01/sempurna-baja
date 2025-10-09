@@ -1,0 +1,167 @@
+[
+    {
+        "id": 1,
+        "image": "https://drive.google.com/file/d/1-v41wLS0qd8naOXcHpX0qsnXBHPz-kNZ/view?usp=drivesdk",
+        "name": "Galvalum 0.30",
+        "slug": "galvalum-030-zenium",
+        "description": "Aluminum and zinc coating that protects against rust and corrosion. Highly durable in tropical and coastal climates. With proper installation, Galvalum can last for decades.",
+        "category": "Galvalum",
+        "price": 40000,
+        "unit": "m",
+        "brand": "Zenium"
+    },
+    {
+        "id": 2,
+        "image": "https://drive.google.com/file/d/1-v41wLS0qd8naOXcHpX0qsnXBHPz-kNZ/view?usp=drivesdk",
+        "name": "Galvalum 0.25",
+        "slug": "galvalum-025-zenium",
+        "description": "",
+        "category": "Galvalum",
+        "price": 35000,
+        "unit": "m",
+        "brand": "Zenium"
+    },
+    {
+        "id": 3,
+        "image": "https://drive.google.com/file/d/1-v41wLS0qd8naOXcHpX0qsnXBHPz-kNZ/view?usp=drivesdk",
+        "name": "Galvalum A 0.30",
+        "slug": "galvalum-a-030-java-pasific",
+        "description": "",
+        "category": "Galvalum",
+        "price": 30000,
+        "unit": "m",
+        "brand": "Java Pasific"
+    },
+    {
+        "id": 4,
+        "image": "https://drive.google.com/file/d/1-v41wLS0qd8naOXcHpX0qsnXBHPz-kNZ/view?usp=drivesdk",
+        "name": "Galvalum 0.25",
+        "slug": "galvalum-025-java-pasific",
+        "description": "",
+        "category": "Galvalum",
+        "price": 22000,
+        "unit": "m",
+        "brand": "Java Pasific"
+    },
+    {
+        "id": 5,
+        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "name": "Channel C75",
+        "slug": "channel-c75-zenium",
+        "description": "Aluminum-zinc coated steel with 55% aluminum and 42–45% zinc composition, known for excellent corrosion resistance and a shiny metallic finish.",
+        "category": "Channel",
+        "price": 85000,
+        "unit": "btg",
+        "brand": "Zenium"
+    },
+    {
+        "id": 6,
+        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "name": "Channel C70",
+        "slug": "channel-c70-zenium",
+        "description": "",
+        "category": "Channel",
+        "price": 83000,
+        "unit": "btg",
+        "brand": "Zenium"
+    },
+    {
+        "id": 7,
+        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "name": "Channel C60",
+        "slug": "channel-c60-java-pasific",
+        "description": "",
+        "category": "Channel",
+        "price": 75000,
+        "unit": "btg",
+        "brand": "Java Pasific"
+    },
+    {
+        "id": 8,
+        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "name": "Channel C75",
+        "slug": "channel-c75-java-pasific",
+        "description": "",
+        "category": "Channel",
+        "price": 75000,
+        "unit": "m",
+        "brand": "Java Pasific"
+    },
+    {
+        "id": 9,
+        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "name": "Channel C70",
+        "slug": "channel-c70-java-pasific",
+        "description": "",
+        "category": "Channel",
+        "price": 73000,
+        "unit": "btg",
+        "brand": "Java Pasific"
+    },
+    {
+        "id": 10,
+        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "name": "Channel C60",
+        "slug": "channel-c60-java-pasific",
+        "description": "",
+        "category": "Channel",
+        "price": 65000,
+        "unit": "btg",
+        "brand": "Java Pasific"
+    },
+    {
+        "id": 11,
+        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "name": "Channel C50 Alexzindo",
+        "slug": "channel-c50-alexzindo-java-pasific",
+        "description": "",
+        "category": "Channel",
+        "price": 58000,
+        "unit": "btg",
+        "brand": "Java Pasific"
+    },
+    {
+        "id": 12,
+        "image": "https://drive.google.com/file/d/1ncjOOaYHnymszDyxFuHKm8kVhIuh97qt/view?usp=drivesdk",
+        "name": "Reng R30/45A",
+        "slug": "reng-r30-45a-zenium",
+        "description": "A lightweight steel component coated with aluminum and zinc, designed to replace traditional wooden frames with greater strength and durability.",
+        "category": "Reng",
+        "price": 40000,
+        "unit": "btg",
+        "brand": "Zenium"
+    },
+    {
+        "id": 13,
+        "image": "https://drive.google.com/file/d/1ncjOOaYHnymszDyxFuHKm8kVhIuh97qt/view?usp=drivesdk",
+        "name": "Reng R30/45B",
+        "slug": "reng-r30-45b-java-pasific",
+        "description": "",
+        "category": "Reng",
+        "price": 29000,
+        "unit": "btg",
+        "brand": "Java Pasific"
+    },
+    {
+        "id": 14,
+        "image": "https://drive.google.com/file/d/1rpQnKVD2x2ArAWMVyJWIfG81QrQ5vJ3H/view?usp=drivesdk",
+        "name": "Sand Roof Tile 0.20",
+        "slug": "sand-roof-tile-020-java-pasific",
+        "description": "Coated with sand and strong adhesive to help reduce noise and heat transfer.",
+        "category": "Sand Roof Tile",
+        "price": 25000,
+        "unit": "lbr",
+        "brand": "Java Pasific"
+    },
+    {
+        "id": 15,
+        "image": "https://drive.google.com/file/d/1tSozAxfe8cHLVOrpUt1zdC9zZZRAWLIQ/view?usp=drivesdk",
+        "name": "Galvalum Sand 0.25",
+        "slug": "galvalum-sand-025-java-pasific",
+        "description": "",
+        "category": "Galvalum Sand",
+        "price": 30500,
+        "unit": "m",
+        "brand": "Java Pasific"
+    }
+]
