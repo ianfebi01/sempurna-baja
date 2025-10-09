@@ -6,14 +6,20 @@
         <div class="md:basis-1/2 flex items-center">
           <ul ref="textRef" class="list-none m-0 opacity-0 translate-y-8">
             <li class="flex items-center gap-4">
-              <Icon name="fa7-solid:location-dot" /> Alamat: Semanu, Gunungkidul, Yogyakarta
+              <Icon name="fa7-solid:location-dot" /> Alamat: Dunggubah 2, RT.01/RW.02,Duwet, Kec. Wonosari, Kabupaten Gunungkidul, Daerah Istimewa Yogyakarta.
             </li>
             <li class="flex items-center gap-4">
-              <Icon name="fa7-solid:phone" />Telepon/WA: <b>081999980596</b>
+              <Icon name="fa7-solid:phone" />Telepon/WA: <b>083144512987</b>
             </li>
-            <li class="flex items-center gap-4">
+            <!-- <li class="flex items-center gap-4">
               <Icon name="fa7-solid:envelope" /> Email: <a
                 href="mailto:ardynugroho3502@gmail.com">Ardynugroho3502@gmail.com</a>
+            </li> -->
+            <li class="mt-12">
+              <NuxtLink :to="`https://wa.me/6283144512987`" class="button button-primary">
+                <Icon name="fa7-solid:paper-plane" />
+                Chat WhatsApp
+              </NuxtLink>
             </li>
           </ul>
         </div>
