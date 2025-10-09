@@ -2,38 +2,15 @@
   <section id="katalog" ref="componentRef">
     <div class="main-container p-20">
       <h2 class="h1 mt-0 text-center mb-12">Katalog Produk Batu Alam</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-4 lg:gap-8 max-w-sm md:max-w-[unset] mx-auto md:mx-[unset]">
-        <NuxtLink
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-4 lg:gap-8 max-w-sm md:max-w-[unset] mx-auto md:mx-[unset]">
+        <div
           v-for="(item, index) in uniqueCategoryProducts"
+          :ref="el => itemsRef[index] = (el as HTMLDivElement)"
           :key="index"
-          :to="`/products/${item.slug}`"
-          class="no-underline group">
-          <div :ref="el => itemsRef[index] = (el as HTMLDivElement)" class="opacity-0 translate-y-8">
-            <div
-              class="rounded-xl bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default overflow-hidden h-full">
-              <!-- Image -->
-              <div class="aspect-video w-full overflow-hidden">
-                <img
-                  :src="item.image"
-                  :alt="item?.name || `sempurna baja ${index}`"
-                  width="500"
-                  height="500"
-                  class="object-cover object-center w-full h-full transition-default hover:scale-105" />
-              </div>
-              <!-- Text -->
-              <div class="p-4 md:p-6 flex flex-col">
-                <div>
-                  <h3>{{ item.name }}</h3>
-                  <p class="line-clamp-3">{{ item.description }}</p>
-                </div>
-                <div class="flex-grow"></div>
-                <div class="mt-4">
-                  <p class="h4 w-fit m-0">{{ `${formatRupiah(item.price)}/${item.unit}` }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </NuxtLink>
+          class="opacity-0 translate-y-8">
+          <ProductCard :product="item"/>
+        </div>
       </div>
       <NuxtLink to="/products" class="mx-auto mt-12 button button-primary">
         Lihat Selengkapnya
@@ -44,6 +21,7 @@
 
 <script lang="ts" setup>
 import products from "@/assets/json/products.json"
+import ProductCard from "../ProductCard.vue"
 
 toRaw( products )
 
