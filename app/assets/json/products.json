@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "image": "https://drive.google.com/file/d/1-v41wLS0qd8naOXcHpX0qsnXBHPz-kNZ/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-5.webp",
         "name": "Galvalum 0.30",
         "slug": "galvalum-030-zenium",
         "description": "Aluminum and zinc coating that protects against rust and corrosion. Highly durable in tropical and coastal climates. With proper installation, Galvalum can last for decades.",
@@ -12,7 +12,7 @@
     },
     {
         "id": 2,
-        "image": "https://drive.google.com/file/d/1-v41wLS0qd8naOXcHpX0qsnXBHPz-kNZ/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-5.webp",
         "name": "Galvalum 0.25",
         "slug": "galvalum-025-zenium",
         "description": "",
@@ -23,7 +23,7 @@
     },
     {
         "id": 3,
-        "image": "https://drive.google.com/file/d/1-v41wLS0qd8naOXcHpX0qsnXBHPz-kNZ/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-5.webp",
         "name": "Galvalum A 0.30",
         "slug": "galvalum-a-030-java-pasific",
         "description": "",
@@ -34,7 +34,7 @@
     },
     {
         "id": 4,
-        "image": "https://drive.google.com/file/d/1-v41wLS0qd8naOXcHpX0qsnXBHPz-kNZ/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-5.webp",
         "name": "Galvalum 0.25",
         "slug": "galvalum-025-java-pasific",
         "description": "",
@@ -45,7 +45,7 @@
     },
     {
         "id": 5,
-        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-6.webp",
         "name": "Channel C75",
         "slug": "channel-c75-zenium",
         "description": "Aluminum-zinc coated steel with 55% aluminum and 42–45% zinc composition, known for excellent corrosion resistance and a shiny metallic finish.",
@@ -56,7 +56,7 @@
     },
     {
         "id": 6,
-        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-6.webp",
         "name": "Channel C70",
         "slug": "channel-c70-zenium",
         "description": "",
@@ -67,7 +67,7 @@
     },
     {
         "id": 7,
-        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-6.webp",
         "name": "Channel C60",
         "slug": "channel-c60-java-pasific",
         "description": "",
@@ -78,7 +78,7 @@
     },
     {
         "id": 8,
-        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-6.webp",
         "name": "Channel C75",
         "slug": "channel-c75-java-pasific",
         "description": "",
@@ -89,7 +89,7 @@
     },
     {
         "id": 9,
-        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-6.webp",
         "name": "Channel C70",
         "slug": "channel-c70-java-pasific",
         "description": "",
@@ -100,7 +100,7 @@
     },
     {
         "id": 10,
-        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-6.webp",
         "name": "Channel C60",
         "slug": "channel-c60-java-pasific",
         "description": "",
@@ -111,7 +111,7 @@
     },
     {
         "id": 11,
-        "image": "https://drive.google.com/file/d/17JBQOvxjCttcporZgNBeNZRFMywhIu0y/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-6.webp",
         "name": "Channel C50 Alexzindo",
         "slug": "channel-c50-alexzindo-java-pasific",
         "description": "",
@@ -122,7 +122,7 @@
     },
     {
         "id": 12,
-        "image": "https://drive.google.com/file/d/1ncjOOaYHnymszDyxFuHKm8kVhIuh97qt/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-4.webp",
         "name": "Reng R30/45A",
         "slug": "reng-r30-45a-zenium",
         "description": "A lightweight steel component coated with aluminum and zinc, designed to replace traditional wooden frames with greater strength and durability.",
@@ -133,7 +133,7 @@
     },
     {
         "id": 13,
-        "image": "https://drive.google.com/file/d/1ncjOOaYHnymszDyxFuHKm8kVhIuh97qt/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-4.webp",
         "name": "Reng R30/45B",
         "slug": "reng-r30-45b-java-pasific",
         "description": "",
@@ -144,7 +144,7 @@
     },
     {
         "id": 14,
-        "image": "https://drive.google.com/file/d/1rpQnKVD2x2ArAWMVyJWIfG81QrQ5vJ3H/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-2.webp",
         "name": "Sand Roof Tile 0.20",
         "slug": "sand-roof-tile-020-java-pasific",
         "description": "Coated with sand and strong adhesive to help reduce noise and heat transfer.",
@@ -155,7 +155,7 @@
     },
     {
         "id": 15,
-        "image": "https://drive.google.com/file/d/1tSozAxfe8cHLVOrpUt1zdC9zZZRAWLIQ/view?usp=drivesdk",
+        "image": "/images/sempurna-baja-1.webp",
         "name": "Galvalum Sand 0.25",
         "slug": "galvalum-sand-025-java-pasific",
         "description": "",
