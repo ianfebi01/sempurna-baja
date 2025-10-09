@@ -2,7 +2,7 @@
   <section id="katalog" ref="componentRef">
     <div class="main-container p-20">
       <h2 class="h1 mt-0 text-center mb-12">Katalog Produk Batu Alam</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-4 lg:gap-8 max-w-sm md:max-w-[unset] mx-auto md:mx-[unset]">
         <NuxtLink
           v-for="(item, index) in uniqueCategoryProducts"
           :key="index"
@@ -27,9 +27,8 @@
                   <p class="line-clamp-3">{{ item.description }}</p>
                 </div>
                 <div class="flex-grow"></div>
-                <div class="flex items-center gap-4 justify-between mt-4">
+                <div class="mt-4">
                   <p class="h4 w-fit m-0">{{ `${formatRupiah(item.price)}/${item.unit}` }}</p>
-                  <div class="button button-primary">Pesan</div>
                 </div>
               </div>
             </div>
