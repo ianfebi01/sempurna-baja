@@ -44,7 +44,7 @@
                 <MenuItem v-for="(cat, i) in categories" :key="i">
                   <button
                     type="button"
-                    class="block w-full text-left px-4 py-3 text-sm hover:font-bold flex justify-between items-center"
+                    class="w-full text-left px-4 py-3 text-sm hover:font-bold flex justify-between items-center"
                     :class="{ 'font-bold': filters.category.includes(cat) }"
                     @click="toggleCategory(cat)">
                     <span>{{ cat }}</span>
