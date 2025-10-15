@@ -2,7 +2,7 @@
   <NuxtLink :to="`/products/${product.slug}`" class="no-underline group">
 
     <div
-      class="rounded-xl bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default overflow-hidden h-full">
+      class="rounded-xl bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default overflow-hidden h-full flex flex-col">
       <!-- Image -->
       <div class="aspect-video w-full overflow-hidden">
         <img
@@ -13,10 +13,11 @@
           class="object-cover object-center w-full h-full transition-default hover:scale-105" />
       </div>
       <!-- Text -->
-      <div class="p-4 md:p-6 flex flex-col">
+      <div class="p-4 md:p-6 flex flex-col flex-grow">
         <div>
           <h3>{{ product.name }}</h3>
-          <p class="line-clamp-3">{{ product.description }}</p>
+          <p v-if="product.brand" class="text-xs">Merk: <b>{{ product.brand }}</b></p>
+          <p v-if="product.description" class="line-clamp-3">{{ product.description }}</p>
         </div>
         <div class="flex-grow"></div>
         <div class="mt-4">
