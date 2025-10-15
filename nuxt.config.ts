@@ -1,3 +1,5 @@
+import products from "./app/assets/json/products.json"
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig( {
   compatibilityDate : "2025-07-15",
@@ -44,6 +46,25 @@ export default defineNuxtConfig( {
           ? `https://${process.env.VERCEL_URL}` // Vercel preview deployments
           : process.env.NUXT_SITE_URL || "http://localhost:3000", // local or vercel dev,
     indexable: process.env.NODE_ENV === "production",
+  },
+  nitro: {
+    preset    : process.env.VERCEL ? "vercel" : "static",
+    prerender : {
+      routes: [
+        "/",
+        "/products",
+      ],
+      failOnError: true,
+    },
+  },
+  hooks: {
+    "nitro:config": async ( nitroConfig ) => {
+      if ( nitroConfig.dev ) {
+        return
+      }
+
+      products.forEach( ( item ) => nitroConfig?.prerender?.routes?.push( `/products/${item.slug}` ) )
+    },
   },
   router: {
     options: {
