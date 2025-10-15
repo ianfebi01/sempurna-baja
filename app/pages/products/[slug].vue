@@ -18,14 +18,16 @@
         <!-- Product Content -->
         <div class="flex flex-col sm:flex-row">
           <div class="sm:basis-[40%]">
-            <div class="aspect-square overflow-hidden rounded-xl">
+            <button
+              class="aspect-square overflow-hidden rounded-xl cursor-pointer"
+              @click="onClickImage(product?.image)">
               <img
                 :src="product?.image"
                 :alt="product?.name || 'product image'"
                 class="w-full h-full object-cover hover:scale-105 transition-default"
                 width="500"
                 height="500" />
-            </div>
+            </button>
           </div>
           <div class="sm:pl-8 sm:basis-[60%]">
             <h1 class="sm:mt-0">{{ product?.name }}</h1>
@@ -33,6 +35,16 @@
             <p v-if="product.description">
               {{ product.description }}
             </p>
+            <div class="flex items-center gap-4">
+
+              <NuxtLink :to="whatsappLink" class="button button-primary mt-8">
+                <Icon name="fa7-solid:paper-plane" />
+                Pesan via WhatsApp
+              </NuxtLink>
+              <button class="button button-secondary mt-8" @click="isOpenShare = true">
+                <Icon name="fa7-solid:share-nodes" />
+                Bagikan</button>
+            </div>
           </div>
         </div>
       </section>
@@ -56,6 +68,13 @@
         </section>
       </div>
     </div>
+    <PreviewImage v-model="isOpenPreview" :selected-image="selectedImage" @close-modal="isOpenPreview = false" />
+    <ShareProductModal
+      v-if="product?.name && product?.slug"
+      v-model="isOpenShare"
+      :product-name="product?.name"
+      :product-url="`${config?.siteUrl}/products/${product?.slug}`"
+      @close-modal="isOpenShare = false" />
   </div>
 </template>
 
@@ -100,6 +119,27 @@ const uniqueCategoryProducts = computed( () => {
     }
     return Array.from( map.values() ).slice( 0, 3 )
 } )
+
+// WhatsApp link
+const whatsappLink = computed( () => {
+    const baseUrl = "https://wa.me/6283144512987"
+    const message = `Halo, saya tertarik ingin memesan produk ${product.value?.name}${product.value?.brand ? ` dari merk ${product.value.brand}` : ""
+        }.\nApakah masih tersedia?`
+    return `${baseUrl}?text=${encodeURIComponent( message )}`
+} )
+
+// Preview Image
+const selectedImage = ref<string>( "" )
+const isOpenPreview = ref<boolean>( false )
+
+const onClickImage = ( val: string ) => {
+    isOpenPreview.value = true
+    selectedImage.value = val
+}
+
+// Share Modal
+const isOpenShare = ref<boolean>( false )
+
 
 // SEO
 const title = `${product.value?.name} - ${product.value?.brand} | Sempurna Baja`

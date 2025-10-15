@@ -17,12 +17,12 @@
           <div class="flex h-full items-center justify-center p-4 text-center">
             <TransitionChild
               as="template"
-              enter="duration-300 ease-out"
-              enter-from="opacity-0 scale-95"
-              enter-to="opacity-100 scale-100"
-              leave="duration-200 ease-in"
-              leave-from="opacity-100 scale-100"
-              leave-to="opacity-0 scale-95">
+              enter="duration-300 ease-out transition-all"
+              enter-from="opacity-0 scale-75 translate-y-20"
+              enter-to="opacity-100 scale-100 translate-y-0"
+              leave="duration-200 ease-in transition-all"
+              leave-from="opacity-100 scale-100 translate-y-0"
+              leave-to="opacity-0 scale-75 translate-y-20">
               <DialogPanel
                 class="h-fit max-h-screen max-w-screen flex items-center mx-auto transform overflow-hidden align-middle shadow-xl transition-all">
                 <img
