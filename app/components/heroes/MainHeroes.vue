@@ -20,7 +20,7 @@
       <div ref="imageRef" class="overflow-hidden aspect-square rounded-2xl relative opacity-0 translate-y-8">
         <img
           src="/images/sempurna-baja-5.webp"
-          alt="Batu alam 15"
+          alt="sempurna baja 5"
           width="500"
           height="500"
           loading="eager"

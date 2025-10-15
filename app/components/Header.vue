@@ -11,7 +11,7 @@
       Produk
     </NuxtLink>
     <div class="grow"></div>
-    <NuxtLink :to="`https://wa.me/6281999980596`" class="button button-primary">
+    <NuxtLink :to="`https://wa.me/6283144512987`" class="button button-primary">
       <Icon name="fa7-solid:paper-plane" />
       Kontak
     </NuxtLink>

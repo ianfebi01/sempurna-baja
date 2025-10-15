@@ -116,10 +116,14 @@ useHead( {
         { name: "og:image", content: product.value?.image || null },
         { name: "twitter:image", content: product.value?.image || null },
         { name: "og:type", content: "article" },
+        { property: "og:url", content: `${config.siteUrl}/products/${route.params.slug}` },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "robots", content: "index, follow" },
     ].filter( ( tag ) => tag.content ),
-    htmlAttrs: { lang: "id" },
+    htmlAttrs : { lang: "id" },
+    link      : [
+        { rel: "canonical", href: `${config.siteUrl}/products/${route.params.slug}` },
+    ],
 } )
 
 /**

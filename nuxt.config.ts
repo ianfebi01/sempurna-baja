@@ -7,8 +7,10 @@ export default defineNuxtConfig( {
       siteName: process.env.NUXT_SITE_NAME,
       siteUrl:
         process.env.VERCEL_ENV === "production"
-          ? `${process.env.NUXT_SITE_URL}` // custom domain in prod
-          : `https://${process.env.VERCEL_URL}`,
+          ? process.env.NUXT_SITE_URL // your custom domain, e.g. https://mysite.com
+          : process.env.VERCEL_ENV === "preview"
+            ? `https://${process.env.VERCEL_URL}` // Vercel preview deployments
+            : process.env.NUXT_SITE_URL || "http://localhost:3000", // local or vercel dev,
     },
   },
   modules: [
@@ -37,10 +39,11 @@ export default defineNuxtConfig( {
   site: {
     url:
       process.env.VERCEL_ENV === "production"
-        ? `https://${process.env.NUXT_SITE_URL}`
-        : `https://${process.env.VERCEL_URL}`,
-    name      : process.env.NUXT_SITE_NAME,
-    indexable : process.env.NODE_ENV === "production",
+        ? process.env.NUXT_SITE_URL // your custom domain, e.g. https://mysite.com
+        : process.env.VERCEL_ENV === "preview"
+          ? `https://${process.env.VERCEL_URL}` // Vercel preview deployments
+          : process.env.NUXT_SITE_URL || "http://localhost:3000", // local or vercel dev,
+    indexable: process.env.NODE_ENV === "production",
   },
   router: {
     options: {
