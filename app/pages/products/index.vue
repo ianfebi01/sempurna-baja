@@ -119,6 +119,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue"
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue"
 import products from "@/assets/json/products.json"
+toRaw( products )
 
 const filters = reactive( {
     q        : "",

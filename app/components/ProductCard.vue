@@ -2,7 +2,11 @@
   <NuxtLink :to="`/products/${product.slug}`" class="no-underline group">
 
     <div
-      class="rounded-xl bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default overflow-hidden h-full flex flex-col">
+      class="rounded-xl bg-gradient-to-t hover:shadow-2xl transition-default overflow-hidden h-full flex flex-col"
+      :class="{
+        'from-gray-100 to-white': bgColour === 'grey',
+        'from-white to-gray-100': bgColour === 'white',
+      }">
       <!-- Image -->
       <div class="aspect-video w-full overflow-hidden">
         <img
@@ -34,7 +38,10 @@ import type { Product } from "~~/shared/types/product"
 
 type Props = {
   product: Product
+  bgColour?: "white" | "grey"
 }
 
-defineProps<Props>()
+withDefaults( defineProps<Props>(), {
+  bgColour: "grey",
+} )
 </script>

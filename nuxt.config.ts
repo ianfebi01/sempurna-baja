@@ -47,4 +47,7 @@ export default defineNuxtConfig( {
       scrollBehaviorType: "smooth",
     },
   },
+  plugins: [
+    "~/plugins/ValidateSlug.ts",
+  ],
 } )
