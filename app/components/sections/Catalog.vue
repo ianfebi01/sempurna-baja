@@ -1,7 +1,7 @@
 <template>
   <section id="katalog" ref="componentRef">
     <div class="main-container p-20">
-      <h2 class="h1 mt-0 text-center mb-12">Katalog Produk Batu Alam</h2>
+      <h2 class="h1 mt-0 text-center mb-12">Katalog Produk</h2>
       <div
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-4 lg:gap-8 max-w-sm md:max-w-[unset] mx-auto md:mx-[unset]">
         <div
