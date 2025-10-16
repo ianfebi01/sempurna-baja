@@ -12,8 +12,8 @@
 
 <script lang="ts" setup>
 const config = useRuntimeConfig()
-const title = "Sempurna Baja – Baja Ringan & Galvalum | Gratis Ongkir"
-const description = "Toko & jasa pasang baja ringan, galvalum, channal, reng, plafon di Wonosari. Gratis ongkir Gunungkidul. Survey & estimasi gratis. WA +62 831-4451-2987."
+const title = "Sempurna Baja – Baja Ringan & Galvalum"
+const description = "Toko & jasa pasang baja ringan, galvalum, channal, reng, plafon di Wonosari. Survey & estimasi gratis. WA +62 831-4451-2987."
 useHead( {
   title : title,
   meta  : [
@@ -64,7 +64,7 @@ useHead( {
         "@context"    : "https://schema.org",
         "@type"       : "LocalBusiness",
         "name"        : "Sempurna Baja",
-        "description" : "Toko & jasa pemasangan baja ringan, galvalum, channal, reng, plafon, dan genteng pasir di Wonosari, Gunungkidul. Gratis ongkir area Gunungkidul.",
+        "description" : "Toko & jasa pemasangan baja ringan, galvalum, channal, reng, plafon, dan genteng pasir di Wonosari, Gunungkidul.",
         "image"       : `${config.public.siteUrl}/images/sempurna-baja-5.webp`,
         "telephone"   : "+6283144512987",
         "address"     : {

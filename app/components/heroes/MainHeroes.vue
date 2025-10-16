@@ -90,7 +90,7 @@ onMounted( async () => {
         if ( headingRef.value ) {
             tl.to( headingRef.value, {
                 duration : 2,
-                text     : "Material lengkap (galvalum, channal, reng, plafon, genteng pasir) + jasa pemasangan profesional. Gratis ongkir area Gunungkidul, survey & estimasi kebutuhan tanpa biaya.", // your text
+                text     : "Material lengkap (galvalum, channal, reng, plafon, genteng pasir) + jasa pemasangan profesional. Survey & estimasi kebutuhan tanpa biaya.",
                 ease     : "none",
             } )
         }

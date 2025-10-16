@@ -12,7 +12,7 @@
                 alt="map"
                 class="w-full h-full object-contain object-center" />
             </div>
-            <h3>Gratis Ongkir Area Gunungkidul</h3>
+            <h3>Pengiriman Cepat</h3>
             <p>Pengiriman cepat ke Wonosari, Playen, Karangmojo, Semanu, Panggang, Paliyan, dan sekitarnya.</p>
           </div>
         </div>
