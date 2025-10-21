@@ -11,6 +11,10 @@
 </template>
 
 <script lang="ts" setup>
+import products from "@/assets/json/products.json"
+
+toRaw( products )
+
 const config = useRuntimeConfig()
 const title = "Sempurna Baja – Baja Ringan & Galvalum"
 const description = "Toko & jasa pasang baja ringan, galvalum, channal, reng, plafon di Wonosari. Survey & estimasi gratis. WA +62 831-4451-2987."
@@ -78,14 +82,24 @@ useHead( {
         "priceRange"      : "IDR 20000-90000",
         "hasOfferCatalog" : {
           "@type"           : "OfferCatalog",
-          "name"            : "Produk Baja Ringan",
-          "itemListElement" : [
-            { "@type": "Product", "name": "Galvalum 0.30", "brand": "Zenium", "offers": { "@type": "Offer", "price": "40000", "priceCurrency": "IDR" } },
-            { "@type": "Product", "name": "Channal C75", "brand": "Zenium", "offers": { "@type": "Offer", "price": "85000", "priceCurrency": "IDR" } },
-          ],
+          "name"            : "Produk Baja Ringan & Galvalum",
+          "itemListElement" : toRaw( products ).map( ( p ) => ( {
+            "@type"       : "Product",
+            "name"        : p.name,
+            "image"       : `${config.public.siteUrl}${p.image}`,
+            "description" : p.description,
+            "brand"       : p.brand,
+            "category"    : p.category,
+            "offers"      : {
+              "@type"         : "Offer",
+              "price"         : p.price.toString(),
+              "priceCurrency" : "IDR",
+              "availability"  : "https://schema.org/InStock",
+              "url"           : `${config.public.siteUrl}/products/${p.slug}`,
+            },
+          } ) ),
         },
-      }
-        ,
+      },
       ),
     },
   ],
