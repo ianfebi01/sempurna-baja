@@ -5,11 +5,11 @@
       <div class="flex flex-col-reverse md:flex-row gap-8 md:gap-0">
         <div class="md:basis-1/2 flex items-center">
           <ul ref="textRef" class="list-none m-0 opacity-0 translate-y-8">
-            <li class="flex items-center gap-4">
-              <Icon name="fa7-solid:location-dot" /> Alamat: Dunggubah 2, RT.01/RW.02,Duwet, Kec. Wonosari, Kabupaten Gunungkidul, Daerah Istimewa Yogyakarta.
+            <li class="flex items-start gap-4">
+              <Icon name="fa7-solid:location-dot" class="size-4 shrink-0 translate-y-0.5" /> Alamat: Dunggubah 2, RT.01/RW.02,Duwet, Kec. Wonosari, Kabupaten Gunungkidul, Daerah Istimewa Yogyakarta.
             </li>
-            <li class="flex items-center gap-4">
-              <Icon name="fa7-solid:phone" />Telepon/WA: <b>083144512987</b>
+            <li class="flex items-start gap-4">
+              <Icon name="fa7-solid:phone" class="size-4 shrink-0 translate-y-0.5" />Telepon/WA: <b>083144512987</b>
             </li>
             <!-- <li class="flex items-center gap-4">
               <Icon name="fa7-solid:envelope" /> Email: <a
