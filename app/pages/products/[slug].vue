@@ -43,7 +43,8 @@
               </NuxtLink>
               <button class="button button-secondary mt-8" @click="isOpenShare = true">
                 <Icon name="fa7-solid:share-nodes" />
-                Bagikan</button>
+                Bagikan
+              </button>
             </div>
           </div>
         </div>
@@ -89,43 +90,43 @@ const { $validateSlug } = useNuxtApp()
 // validation
 const slug: Ref<string | null> = ref( null )
 const create404 = ( slug: string ) =>
-    createError( {
-        statusCode    : 404,
-        statusMessage : `Page Not Found: ${slug}`,
-        fatal         : true,
-    } )
+  createError( {
+    statusCode    : 404,
+    statusMessage : `Page Not Found: ${slug}`,
+    fatal         : true,
+  } )
 
 if ( !$validateSlug( `${route.params.slug}` ) ) {
-    console.error( "invalid route", route.params.slug )
-    throw create404( `${route.params.slug}` )
+  console.error( "invalid route", route.params.slug )
+  throw create404( `${route.params.slug}` )
 } else {
-    slug.value = `${route.params.slug}`
+  slug.value = `${route.params.slug}`
 }
 
 const product = computed( () =>
-    products.find( ( item ) => item.slug === route.params.slug ),
+  products.find( ( item ) => item.slug === route.params.slug ),
 )
 if ( !product.value ) {
-    console.error( "product not found", route.params.slug )
-    throw create404( `${route.params.slug}` )
+  console.error( "product not found", route.params.slug )
+  throw create404( `${route.params.slug}` )
 }
 
 const uniqueCategoryProducts = computed( () => {
-    const map = new Map()
-    for ( const product of products.filter( ( item ) => item.slug !== route.params.slug ) ) {
-        if ( !map.has( product.category ) ) {
-            map.set( product.category, product )
-        }
+  const map = new Map()
+  for ( const product of products.filter( ( item ) => item.slug !== route.params.slug ) ) {
+    if ( !map.has( product.category ) ) {
+      map.set( product.category, product )
     }
-    return Array.from( map.values() ).slice( 0, 3 )
+  }
+  return Array.from( map.values() ).slice( 0, 3 )
 } )
 
 // WhatsApp link
 const whatsappLink = computed( () => {
-    const baseUrl = "https://wa.me/6283144512987"
-    const message = `Halo, saya tertarik ingin memesan produk ${product.value?.name}${product.value?.brand ? ` dari merk ${product.value.brand}` : ""
-        }.\nApakah masih tersedia?`
-    return `${baseUrl}?text=${encodeURIComponent( message )}`
+  const baseUrl = "https://wa.me/6283144512987"
+  const message = `Halo, saya tertarik ingin memesan produk ${product.value?.name}${product.value?.brand ? ` dari merk ${product.value.brand}` : ""
+    }.\nApakah masih tersedia?`
+  return `${baseUrl}?text=${encodeURIComponent( message )}`
 } )
 
 // Preview Image
@@ -133,8 +134,8 @@ const selectedImage = ref<string>( "" )
 const isOpenPreview = ref<boolean>( false )
 
 const onClickImage = ( val: string ) => {
-    isOpenPreview.value = true
-    selectedImage.value = val
+  isOpenPreview.value = true
+  selectedImage.value = val
 }
 
 // Share Modal
@@ -146,24 +147,61 @@ const title = `${product.value?.name} - ${product.value?.brand} | Sempurna Baja`
 const sitename = config.siteName
 const desc = product.value.description
 useHead( {
-    title : title || sitename || null,
-    meta  : [
-        { name: "og:title", content: title },
-        { name: "twitter:title", content: title },
-        { name: "description", content: desc || null },
-        { name: "og:description", content: desc || null },
-        { name: "twitter:description", content: desc || null },
-        { name: "og:image", content: product.value?.image || null },
-        { name: "twitter:image", content: product.value?.image || null },
-        { name: "og:type", content: "article" },
-        { property: "og:url", content: `${config.siteUrl}/products/${route.params.slug}` },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "robots", content: "index, follow" },
-    ].filter( ( tag ) => tag.content ),
-    htmlAttrs : { lang: "id" },
-    link      : [
-        { rel: "canonical", href: `${config.siteUrl}/products/${route.params.slug}` },
-    ],
+  title : title || sitename || null,
+  meta  : [
+    { name: "og:title", content: title },
+    { name: "twitter:title", content: title },
+    { name: "description", content: desc || null },
+    { name: "og:description", content: desc || null },
+    { name: "twitter:description", content: desc || null },
+    { name: "og:image", content: product.value?.image || null },
+    { name: "twitter:image", content: product.value?.image || null },
+    { name: "og:type", content: "article" },
+    { property: "og:url", content: `${config.siteUrl}/products/${route.params.slug}` },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "robots", content: "index, follow" },
+  ].filter( ( tag ) => tag.content ),
+  htmlAttrs : { lang: "id" },
+  link      : [
+    { rel: "canonical", href: `${config.siteUrl}/products/${route.params.slug}` },
+  ],
+  script: [
+    {
+      type      : "application/ld+json",
+      innerHTML : JSON.stringify( {
+        "@context"    : "https://schema.org",
+        "@type"       : "Product",
+        "name"        : product.value.name,
+        "image"       : `${config.siteUrl}${product.value.image}`,
+        "description" : product.value.description,
+        "brand"       : {
+          "@type" : "Brand",
+          "name"  : product.value.brand,
+        },
+        "sku"      : product.value.slug,
+        "category" : product.value.category,
+        "offers"   : {
+          "@type"         : "Offer",
+          "url"           : `${config.siteUrl}/products/${product.value.slug}`,
+          "priceCurrency" : "IDR",
+          "price"         : product.value.price.toString(),
+          "availability"  : "https://schema.org/InStock",
+          "seller"        : {
+            "@type"     : "LocalBusiness",
+            "name"      : "Sempurna Baja",
+            "telephone" : "+6283144512987",
+            "address"   : {
+              "@type"           : "PostalAddress",
+              "streetAddress"   : "Dunggubah 2, RT.01/RW.02, Duwet",
+              "addressLocality" : "Wonosari",
+              "addressRegion"   : "Yogyakarta",
+              "addressCountry"  : "ID",
+            },
+          },
+        },
+      } ),
+    },
+  ],
 } )
 
 /**
@@ -175,50 +213,50 @@ const productSectionRef = ref<HTMLElement>()
 let ctx: gsap.Context | null = null
 
 onMounted( async () => {
-    if ( !import.meta.client ) return
+  if ( !import.meta.client ) return
 
-    const gsap = ( await import( "gsap" ) ).default
-    const { ScrollTrigger } = await import( "gsap/ScrollTrigger" )
-    gsap.registerPlugin( ScrollTrigger )
+  const gsap = ( await import( "gsap" ) ).default
+  const { ScrollTrigger } = await import( "gsap/ScrollTrigger" )
+  gsap.registerPlugin( ScrollTrigger )
 
-    ctx = gsap.context( () => {
-        // Animate main product section
-        if ( productSectionRef.value ) {
-            gsap.to( productSectionRef.value, {
-                scrollTrigger: {
-                    trigger       : productSectionRef.value,
-                    start         : "top 85%",
-                    toggleActions : "play none none none",
-                },
-                opacity  : 1,
-                y        : 0,
-                duration : 1,
-                ease     : "power2.out",
-            } )
-        }
+  ctx = gsap.context( () => {
+    // Animate main product section
+    if ( productSectionRef.value ) {
+      gsap.to( productSectionRef.value, {
+        scrollTrigger: {
+          trigger       : productSectionRef.value,
+          start         : "top 85%",
+          toggleActions : "play none none none",
+        },
+        opacity  : 1,
+        y        : 0,
+        duration : 1,
+        ease     : "power2.out",
+      } )
+    }
 
-        // Animate "Lihat Produk lainnya" grid
-        if ( componentRef.value && itemsRef.value?.length ) {
-            const tl = gsap.timeline( {
-                scrollTrigger: {
-                    trigger       : componentRef.value,
-                    start         : "top 75%",
-                    toggleActions : "play none none none",
-                },
-            } )
-            tl.to( itemsRef.value, {
-                ease       : "power2.out",
-                translateY : 0,
-                duration   : 1,
-                opacity    : 1,
-                delay      : 0.2,
-                stagger    : 0.2,
-            } )
-        }
-    } )
+    // Animate "Lihat Produk lainnya" grid
+    if ( componentRef.value && itemsRef.value?.length ) {
+      const tl = gsap.timeline( {
+        scrollTrigger: {
+          trigger       : componentRef.value,
+          start         : "top 75%",
+          toggleActions : "play none none none",
+        },
+      } )
+      tl.to( itemsRef.value, {
+        ease       : "power2.out",
+        translateY : 0,
+        duration   : 1,
+        opacity    : 1,
+        delay      : 0.2,
+        stagger    : 0.2,
+      } )
+    }
+  } )
 } )
 
 onBeforeUnmount( () => {
-    if ( ctx ) ctx.revert()
+  if ( ctx ) ctx.revert()
 } )
 </script>
