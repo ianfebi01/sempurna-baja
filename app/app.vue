@@ -1,10 +1,8 @@
 <template>
   <div class="flex flex-col relative min-h-screen">
-    <div class="sticky top-0 left-0 z-40 print:hidden bg-white shadow-sm">
-      <Header />
-    </div>
-    <NuxtPage class="grow" />
-    <Footer />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
 <script lang="ts" setup>

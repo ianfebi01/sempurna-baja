@@ -17,25 +17,18 @@ export default defineNuxtConfig( {
   },
   modules: [
     "@nuxt/eslint",
-    "@nuxtjs/tailwindcss",
     "@nuxtjs/sitemap",
     "@nuxtjs/robots",
     "@nuxt/icon",
     "@nuxt/image",
+    "@nuxt/ui",
   ],
   eslint: {
     checker: true,
   },
-  tailwindcss: {
-    exposeConfig: true,
-  },
-  css     : ["@/assets/css/main.css"],
-  postcss : {
+  postcss: {
     plugins: {
-      "postcss-import"      : {},
-      "tailwindcss/nesting" : {},
-      tailwindcss           : {},
-      autoprefixer          : {},
+      "@tailwindcss/postcss": {},
     },
   },
   site: {
@@ -74,4 +67,7 @@ export default defineNuxtConfig( {
   plugins: [
     "~/plugins/ValidateSlug.ts",
   ],
+  ui: {
+    colorMode: false,
+  },
 } )
