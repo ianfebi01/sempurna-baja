@@ -21,13 +21,20 @@ export async function clearAuth( event: H3Event ) {
 export async function requireAuth( event: H3Event ) {
   const token = await getAuth( event )
 
-  if ( !token )
+  if ( !token ) {
     throw createError( {
       statusCode : 401,
       statusText : "Unauthorized! token invalid.",
     } )
+  }
 
-  const payload = await verifyJWT( token )
-
-  return payload
+  
+  try {
+    const payload = await verifyJWT( token )
+    return payload
+  } catch ( error: unknown ) {
+    await clearAuth( event )
+    console.log( error )
+    return
+  }
 }
