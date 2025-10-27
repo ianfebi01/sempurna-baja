@@ -23,6 +23,7 @@ definePageMeta( {
 } )
 
 const toast = useToast()
+const router = useRouter()
 
 const fields: AuthFormField[] = [{
     name        : "email",
@@ -57,14 +58,14 @@ async function login( loginForm: Schema ) {
     try {
         const data = await $fetch( "/api/auth/login", { method: "POST", body: loginForm } )
         if ( data.loggedIn ) {
-            me()
+            await me()
             emit( "onLogin", data.user )
             toast.add( {
                 title       : "Berhasil Masuk",
                 icon        : "i-ph-sign-in",
                 description : `${data.user} berhasil masuk.`,
             } )
-            navigateTo( "/admin" )
+            router.replace( "/admin" )
         }
     } catch ( error: unknown ) {
         emit( "onError", error )

@@ -51,15 +51,16 @@ async function onSubmit( payload: FormSubmitEvent<Schema> ) {
 }
 
 const { me } = useAuth()
+const router = useRouter()
 const emit = defineEmits( ["onLogin", "onRegister", "onError"] )
 
 async function register( registerForm: Schema ) {
     try {
         const data = await $fetch( "/api/auth/register", { method: "POST", body: registerForm } )
         if ( data.registered ) {
-            me()
+            await me()
             emit( "onRegister", data.user )
-            navigateTo( "/admin" )
+            router.replace( "/admin" )
             toast.add( {
                 title       : "Berhasil Membuat Akun",
                 icon        : "i-ph-sign-in",
