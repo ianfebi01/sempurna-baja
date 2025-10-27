@@ -124,7 +124,7 @@ definePageMeta( {
   layout     : "admin",
   middleware : "auth",
 } )
-
+const router = useRouter()
 const UAvatar = resolveComponent( "UAvatar" )
 const UButton = resolveComponent( "UButton" )
 const UTooltip = resolveComponent( "UTooltip" )
@@ -138,7 +138,7 @@ const columnFilters = ref( [{
   value : "",
 }] )
 const columnVisibility = ref()
-const rowSelection = ref( )
+const rowSelection = ref()
 
 const { data, status } = await useFetch<Product[]>( "/api/products", {
   lazy: true,
@@ -276,9 +276,17 @@ const columns: TableColumn<Product>[] = [
           {
             content : { align: "end" },
             items   : [
-              { label: "View", icon: "i-lucide-eye", click: () => console.log( "View", row.original ) },
-              { label: "Edit", icon: "i-lucide-pencil", click: () => console.log( "Edit", row.original ) },
-              { label: "Delete", icon: "i-lucide-trash", click: () => console.log( "Delete", row.original ) },
+              {
+                label    : "Lihat", icon     : "i-lucide-eye", onSelect : () => {
+                  const route = router.resolve( {
+                    name   : "products-slug",
+                    params : { slug: row.original.slug },
+                  } )
+                  window.open( route.href, "_blank" )
+                },
+              },
+              { label: "Edit", icon: "i-lucide-pencil", onSelect: () => console.log( "Edit", row.original ) },
+              { label: "Delete", icon: "i-lucide-trash", onSelect: () => console.log( "Delete", row.original ) },
             ],
           },
           () =>
