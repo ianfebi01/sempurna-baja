@@ -1,17 +1,54 @@
 <script setup lang="ts">
 import "~/assets/css/admin.css"
 import type { NavigationMenuItem } from "@nuxt/ui"
+import { useAuth } from "~/compossables/useAuth"
 
+const toast = useToast()
+const router = useRouter()
 const open = ref( false )
+const { loggedIn, user, clear } = useAuth()
 
 const items: NavigationMenuItem[][] = [
-    [
-        {
-            label : "Produk",
-            icon  : "fa7-solid:bag-shopping",
-            href  : "/admin",
-        },
-    ],
+  [
+    {
+      label : "Produk",
+      icon  : "fa7-solid:bag-shopping",
+      href  : "/admin",
+    },
+  ],
+]
+
+const profileDropdownItems = [
+  [
+    {
+      label    : "Akun",
+      slot     : "account",
+      disabled : true,
+    },
+  ],
+  [
+    {
+      label : "Profile",
+      icon  : "i-ph-user-duotone",
+      click : () => router.replace( { name: "profile" } ),
+    },
+  ],
+  [
+    {
+      label    : "Sign out",
+      icon     : "i-ph-sign-out",
+      onSelect : () => {
+        clear()
+        router.replace( { path: "/" } )
+        toast.add( {
+          color       : "error",
+          title       : "Logged out!",
+          icon        : "i-ph-sign-out",
+          description : "user signed out successfully.",
+        } )
+      },
+    },
+  ],
 ]
 </script>
 
@@ -55,15 +92,23 @@ const items: NavigationMenuItem[][] = [
           </template>
 
           <template #footer="{ collapsed }">
-            <UButton
-              :avatar="{
-                src: 'https://github.com/benjamincanac.png',
-              }"
-              :label="collapsed ? undefined : 'Benjamin'"
-              color="neutral"
-              variant="ghost"
-              class="w-full"
-              :block="collapsed" />
+            <UDropdownMenu v-if="loggedIn" :items="profileDropdownItems" mode="hover">
+              <UButton variant="link" class="p-0 cursor-pointer">
+                <UAvatar :src="`https://unavatar.io/gravatar/${user.email}`" class="bg-gray-200 dark:bg-neutral-800" />
+                <p v-if="!collapsed" class="truncate">{{ user.email }}</p>
+              </UButton>
+
+              <template #account>
+                <div class="text-left w-full">
+                  <p>
+                    Signed in as
+                  </p>
+                  <p class="truncate font-medium">
+                    {{ user.email }}
+                  </p>
+                </div>
+              </template>
+            </UDropdownMenu>
           </template>
         </UDashboardSidebar>
         <slot></slot>

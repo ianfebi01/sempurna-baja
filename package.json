@@ -34,6 +34,9 @@
     "@tailwindcss/postcss": "^4.1.15",
     "@tailwindcss/vite": "^4.1.15",
     "@types/node": "20.19.0",
+    "bcryptjs": "^3.0.2",
+    "jose": "^6.1.0",
+    "nuxt-mongoose": "^1.0.6",
     "tailwindcss": "^4.1.15",
     "typescript": "^5.9.2",
     "vite-plugin-eslint2": "^5.0.4"

@@ -14,6 +14,12 @@ export default defineNuxtConfig( {
             ? `https://${process.env.VERCEL_URL}` // Vercel preview deployments
             : process.env.NUXT_SITE_URL || "http://localhost:3000", // local or vercel dev,
     },
+    auth: {
+      mongo: {
+        secret  : process.env.JWT_SECRET as string,
+        exclude : [],
+      },
+    },
   },
   modules: [
     "@nuxt/eslint",
@@ -22,6 +28,7 @@ export default defineNuxtConfig( {
     "@nuxt/icon",
     "@nuxt/image",
     "@nuxt/ui",
+    "nuxt-mongoose",
   ],
   eslint: {
     checker: true,

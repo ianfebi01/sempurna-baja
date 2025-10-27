@@ -118,11 +118,11 @@
 import type { TableColumn } from "@nuxt/ui"
 import { upperFirst } from "scule"
 import { getPaginationRowModel } from "@tanstack/table-core"
-import type { Row } from "@tanstack/table-core"
 import type { Product } from "#shared/types/product"
 
 definePageMeta( {
-  layout: "admin",
+  layout     : "admin",
+  middleware : "auth",
 } )
 
 const UAvatar = resolveComponent( "UAvatar" )
@@ -131,7 +131,6 @@ const UTooltip = resolveComponent( "UTooltip" )
 const UDropdownMenu = resolveComponent( "UDropdownMenu" )
 const UCheckbox = resolveComponent( "UCheckbox" )
 
-const toast = useToast()
 const table = useTemplateRef( "table" )
 
 const columnFilters = ref( [{
