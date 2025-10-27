@@ -37,8 +37,8 @@ const profileDropdownItems = [
     {
       label    : "Sign out",
       icon     : "i-ph-sign-out",
-      onSelect : () => {
-        clear()
+      onSelect : async () => {
+        await clear()
         router.replace( { path: "/" } )
         toast.add( {
           color       : "error",
