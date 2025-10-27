@@ -14,7 +14,7 @@ export const UserSchema = defineMongooseModel( {
     },
   },
   hooks( schema ) {
-    schema.pre( "save", function ( this, next ) {
+    schema.pre( "save", function handleUserSave ( this, next ) {
       // TODO: better validation
       if ( this.password && this.email )
         next()
