@@ -10,5 +10,5 @@ export default defineNuxtRouteMiddleware( ( to ) => {
 
   // Redirect guests away from protected routes like /admin
   if ( !loggedIn.value && to.path.startsWith( "/admin" ) )
-    return navigateTo( "/" )
+    return navigateTo( "/login" )
 } )
