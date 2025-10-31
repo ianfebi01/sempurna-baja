@@ -14,6 +14,7 @@ export function baseMeta( event: H3Event ) {
   } as ApiMeta
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isZodError( e: any ): e is ZodError {
   return e?.issues && Array.isArray( e.issues )
 }
@@ -30,7 +31,9 @@ export function normalizeError( e: unknown ) {
     const he = e as H3Error
     statusCode = he.statusCode ?? 500
     message = he.statusMessage || message
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     code = ( he as any ).data?.code || code
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     details = ( he as any ).data?.details
     return { statusCode, code, message, details }
   }
