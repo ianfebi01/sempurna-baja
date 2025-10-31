@@ -2,23 +2,71 @@
 import * as z from "zod"
 import type { FormSubmitEvent } from "@nuxt/ui"
 
+const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
+const MIN_DIMENSIONS = { width: 200, height: 200 }
+const MAX_DIMENSIONS = { width: 4096, height: 4096 }
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+
+const isLoading = ref( false )
+
+const formatBytes = ( bytes: number, decimals = 2 ) => {
+  if ( bytes === 0 ) return "0 Bytes"
+  const k = 1024
+  const dm = decimals < 0 ? 0 : decimals
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+  const i = Math.floor( Math.log( bytes ) / Math.log( k ) )
+  return Number.parseFloat( ( bytes / Math.pow( k, i ) ).toFixed( dm ) ) + " " + sizes[i]
+}
+
 const schema = z.object( {
-  image       : z.string().url( "Invalid image URL" ).or( z.string().startsWith( "/" ) ).optional(),
-  name        : z.string().min( 2, "Name too short" ),
-  slug        : z.string().min( 2, "Slug too short" ),
-  description : z.string().min( 10, "Description too short" ),
-  category    : z.string().min( 2, "Category too short" ),
-  price       : z.number().min( 1000, "Minimal price is 1000" ),
-  unit        : z.string().min( 1, "Unit required" ),
-  brand       : z.string().min( 2, "Brand too short" ),
+  image: z
+    .instanceof( File, {
+      message: "Silakan pilih file gambar.",
+    } )
+    .refine( ( file ) => file.size <= MAX_FILE_SIZE, {
+      message: `Ukuran gambar terlalu besar. Silakan pilih gambar yang ukurannya kurang dari ${formatBytes( MAX_FILE_SIZE )}.`,
+    } )
+    .refine( ( file ) => ACCEPTED_IMAGE_TYPES.includes( file.type ), {
+      message: "Format gambar tidak valid. Format yang diperbolehkan: JPEG, PNG, atau WebP.",
+    } )
+    .refine(
+      ( file ) =>
+        new Promise( ( resolve ) => {
+          const reader = new FileReader()
+          reader.onload = ( e ) => {
+            const img = new Image()
+            img.onload = () => {
+              const meetsDimensions =
+                img.width >= MIN_DIMENSIONS.width &&
+                img.height >= MIN_DIMENSIONS.height &&
+                img.width <= MAX_DIMENSIONS.width &&
+                img.height <= MAX_DIMENSIONS.height
+              resolve( meetsDimensions )
+            }
+            img.src = e.target?.result as string
+          }
+          reader.readAsDataURL( file )
+        } ),
+      {
+        message: `Dimensi gambar tidak sesuai. Silakan unggah gambar dengan dimensi antara ${MIN_DIMENSIONS.width}x${MIN_DIMENSIONS.height} hingga ${MAX_DIMENSIONS.width}x${MAX_DIMENSIONS.height} piksel.`,
+      },
+    ),
+  name        : z.string().min( 2, "Nama terlalu pendek" ),
+  slug        : z.string().min( 2, "Slug terlalu pendek" ),
+  description : z.string().min( 10, "Deskripsi terlalu pendek" ),
+  category    : z.string().min( 2, "Kategori terlalu pendek" ),
+  price       : z.number().min( 1000, "Harga minimal adalah 1000" ),
+  unit        : z.string().min( 1, "Satuan wajib diisi" ),
+  brand       : z.string().min( 2, "Brand terlalu pendek" ),
 } )
+
 
 const open = ref( false )
 
 type Schema = z.output<typeof schema>
 
 const state = reactive<Partial<Schema>>( {
-  image       : "",
+  image       : undefined,
   name        : "",
   slug        : "",
   description : "",
@@ -30,8 +78,32 @@ const state = reactive<Partial<Schema>>( {
 
 const toast = useToast()
 async function onSubmit( event: FormSubmitEvent<Schema> ) {
-  toast.add( { title: "Sukses", description: `Sukses menambahkan produk ${event.data.name}`, color: "success" } )
-  open.value = false
+  isLoading.value = true
+
+  try {
+    const formData = new FormData()
+    Object.keys( state ).forEach( ( key )=>{
+      if ( state[key as keyof typeof state] )
+      formData.append( key, state[key as keyof typeof state] as Blob )
+    } )
+
+    await $fetch<{ url: string }>( "/api/products/create", {
+      method : "POST",
+      body   : formData,
+    } )
+
+    toast.add( { title: "Sukses", description: `Sukses menambahkan produk ${event.data.name}`, color: "success" } )
+    open.value = false
+  } catch ( error: unknown ) {
+    const err = error as Error
+    toast.add( {
+      title       : "Gagal menambahkan produk.",
+      description : err.message,
+      color       : "error",
+    } )
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 
@@ -45,9 +117,16 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
         :state="state"
         class="space-y-4"
         @submit="onSubmit">
-        <UFormField label="Gambar (URL)" name="image">
-          <UInput v-model="state.image" placeholder="/images/sempurna-baja-5.webp" class="w-full" />
+        <UFormField label="Gambar" name="image">
+          <UFileUpload
+            v-model="state.image"
+            accept="image/*"
+            :max-files="1"
+            label="Pilih gambar"
+            description="PNG, JPG, atau WEBP (maks 2 MB)"
+            class="w-full max-w-xs aspect-square" />
         </UFormField>
+
 
         <UFormField label="Nama Produk" name="name">
           <UInput v-model="state.name" placeholder="Galvalum 0.30" class="w-full" />
@@ -93,7 +172,8 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
             label="Buat Produk"
             color="neutral"
             variant="solid"
-            type="submit" />
+            type="submit"
+            :loading="isLoading"/>
         </div>
       </UForm>
     </template>
