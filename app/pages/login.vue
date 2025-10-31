@@ -16,6 +16,7 @@
 import * as z from "zod"
 import type { FormSubmitEvent, AuthFormField } from "@nuxt/ui"
 import { useAuth } from "~/compossables/useAuth"
+import type { ApiError, ApiSuccess, Login } from "~~/shared/types"
 
 definePageMeta( {
     layout     : "auth",
@@ -52,23 +53,48 @@ async function onSubmit( payload: FormSubmitEvent<Schema> ) {
 }
 
 const { me } = useAuth()
-const emit = defineEmits( ["onLogin", "onRegister", "onError"] )
 
 async function login( loginForm: Schema ) {
     try {
-        const data = await $fetch( "/api/auth/login", { method: "POST", body: loginForm } )
-        if ( data.loggedIn ) {
+        const data = await $fetch<ApiSuccess<Login> | ApiError>( "/api/auth/login", {
+            method : "POST",
+            body   : loginForm,
+        } )
+
+        if ( data.success ) {
             await me()
-            emit( "onLogin", data.user )
+
             toast.add( {
                 title       : "Berhasil Masuk",
                 icon        : "i-ph-sign-in",
-                description : `${data.user} berhasil masuk.`,
+                description : `${data.data.user} berhasil masuk.`,
             } )
             router.replace( "/admin" )
+        } else {
+            // ApiError shape
+            toast.add( {
+                title       : "Gagal Masuk",
+                description : data.error?.message ?? "Login gagal.",
+                color       : "error",
+            } )
         }
-    } catch ( error: unknown ) {
-        emit( "onError", error )
+    } catch ( err: unknown ) {
+        console.log( "error: ", ( err as { data: ApiError } )?.data )
+        const error = err as { data: ApiError, status: number }
+        if ( ( err as { data: ApiError, status: number } )?.status === 401 ) {
+            toast.add( {
+                title       : "Gagal Masuk",
+                description : error?.data.error?.message ?? "Email atau password salah.",
+                color       : "error",
+            } )
+        } else {
+            toast.add( {
+                title       : "Error",
+                description : "Terjadi kesalahan pada server.",
+                color       : "error",
+            } )
+        }
     }
 }
+
 </script>

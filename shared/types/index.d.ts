@@ -4,16 +4,18 @@ export interface AuthPayload extends JWTPayload {
   email?: string
 }
 
+export interface ApiMeta {
+  requestId: string
+  method: string
+  path: string
+  durationMs: number
+  ts: string
+}
+
 type ApiSuccess<T> = {
   success: true
   data: T
-  meta: {
-    requestId: string
-    method: string
-    path: string
-    durationMs: number
-    ts: string
-  }
+  meta: ApiMeta
 }
 
 type ApiError = {
@@ -23,11 +25,12 @@ type ApiError = {
     message: string
     details?: unknown
   }
-  meta: {
-    requestId: string
-    method: string
-    path: string
-    durationMs: number
-    ts: string
-  }
+  meta: ApiMeta
+}
+
+// Auth
+
+export interface Login {
+  loggedIn: boolean,
+  user: string
 }

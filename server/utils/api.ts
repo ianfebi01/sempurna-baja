@@ -1,8 +1,9 @@
-import type { H3Error} from "h3"
+import type { H3Error, H3Event } from "h3"
 import { createError, setResponseStatus } from "h3"
 import type { ZodError } from "zod"
+import type { ApiError, ApiMeta, ApiSuccess } from "~~/shared/types"
 
-export function baseMeta( event: any ) {
+export function baseMeta( event: H3Event ) {
   const start = event.context.__start ?? performance.now()
   return {
     requestId  : event.context.requestId as string,
@@ -10,7 +11,7 @@ export function baseMeta( event: any ) {
     path       : event.node.req.url || "",
     durationMs : Math.round( performance.now() - start ),
     ts         : new Date().toISOString(),
-  }
+  } as ApiMeta
 }
 
 export function isZodError( e: any ): e is ZodError {
@@ -55,7 +56,7 @@ export function normalizeError( e: unknown ) {
  * Bungkus handler agar output konsisten { success, data/error, meta }
  */
 export function defineApi<T>(
-  fn: ( event: any ) => Promise<T> | T,
+  fn: ( event: H3Event ) => Promise<T> | T,
 ) {
   return defineEventHandler( async ( event ) => {
     try {
@@ -65,7 +66,7 @@ export function defineApi<T>(
         success : true,
         data,
         meta    : baseMeta( event ),
-      }
+      } as ApiSuccess<T>
     } catch ( err ) {
       const { statusCode, code, message, details } = normalizeError( err )
       setResponseStatus( event, statusCode )
@@ -73,7 +74,7 @@ export function defineApi<T>(
         success : false,
         error   : { code, message, details },
         meta    : baseMeta( event ),
-      }
+      } as ApiError
     }
   } )
 }

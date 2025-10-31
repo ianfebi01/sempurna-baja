@@ -1,9 +1,9 @@
 import mongoose from "mongoose"
 import bcrypt from "bcryptjs"
 
-const errorMessage = "email or password is wrong! please try again later"
+const errorMessage = "Email atau password salah."
 
-export default defineEventHandler( async ( event ) => {
+export default defineApi( async ( event ) => {
   // TODO: use validation
   const { email, password } = await readBody( event )
 
@@ -16,17 +16,13 @@ export default defineEventHandler( async ( event ) => {
   const user = await mongoose.connection.db?.collection( "users" ).findOne( { email } )
 
   if ( !user ) {
-    throw createError( {
-      statusMessage: errorMessage,
-    } )
+    return fail( 401, errorMessage )
   }
 
   const matches = bcrypt.compareSync( password, user.password )
 
   if ( !matches ) {
-    throw createError( {
-      statusMessage: errorMessage,
-    } )
+    return fail( 401, errorMessage )
   }
 
   await setAuth( event, user.email )
