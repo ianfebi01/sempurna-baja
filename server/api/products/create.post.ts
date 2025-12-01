@@ -4,11 +4,11 @@ import * as z from "zod"
 import { defineApi, fail } from "~~/server/utils/api"
 
 export default defineApi( async ( event ) => {
-  // ---- constants
+  // constants
   const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
   const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
 
-  // ---- helpers
+  // helpers
   const formatBytes = ( bytes: number, decimals = 2 ) => {
     if ( bytes === 0 ) return "0 Bytes"
     const k = 1024
@@ -18,13 +18,13 @@ export default defineApi( async ( event ) => {
     return parseFloat( ( bytes / Math.pow( k, i ) ).toFixed( dm ) ) + " " + sizes[i]
   }
 
-  // ---- read form
+  // read form
   const form = await readMultipartFormData( event )
   if ( !form ) {
     return fail( 400, "Invalid form data", "BAD_REQUEST" )
   }
 
-  // ---- split parts into text + file
+  // split parts into text + file
   const data: Record<string, string> = {}
   let imagePart: { filename?: string | null; type?: string | null; data: Uint8Array } | null = null
 
@@ -38,7 +38,7 @@ export default defineApi( async ( event ) => {
     }
   }
 
-  // ---- auth
+  // auth
   const me = await requireAuth( event )
   const email = me?.email
   const user = await UserSchema.findOne( { email } )
@@ -46,7 +46,7 @@ export default defineApi( async ( event ) => {
     fail( 401, "Unauthorized", "UNAUTHORIZED" )
   }
 
-  // ---- zod (text fields only)
+  // zod (text fields only)
   const textSchema = z.object( {
     name        : z.string().min( 2, "Nama terlalu pendek" ),
     slug        : z.string().min( 2, "Slug terlalu pendek" ).optional(), // we might auto-generate
@@ -63,7 +63,7 @@ export default defineApi( async ( event ) => {
     throw createError( { statusCode: 400, statusMessage: first.message } )
   }
 
-  // ---- slug: sanitize + uniqueness
+  // slug: sanitize + uniqueness
   const slug = ( parsed.data.slug || parsed.data.name )
     .toLowerCase()
     .replace( /[^a-z0-9]+/g, "-" )
@@ -74,7 +74,7 @@ export default defineApi( async ( event ) => {
     return fail( 409, `Slug "${slug}" already exists.` )
   }
 
-  // ---- file validations (server-side)
+  // file validations (server-side)
   let imageUrl: string | null = null
   if ( imagePart ) {
     const mime = imagePart.type || ""
@@ -109,7 +109,7 @@ export default defineApi( async ( event ) => {
     imageUrl = res.url
   }
 
-  // ---- save
+  // save
   // const product = await new ProductSchema( {
   //   name        : parsed.data.name,
   //   slug,
