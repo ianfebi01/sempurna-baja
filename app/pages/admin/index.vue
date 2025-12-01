@@ -7,7 +7,11 @@
         </template>
 
         <template #right>
-          <AdminProductsAddModal />
+          <UButton
+            label="Tambah Produk"
+            icon="i-lucide-plus"
+            color="neutral"
+            to="/admin/add-product" />
         </template>
       </UDashboardNavbar>
     </template>

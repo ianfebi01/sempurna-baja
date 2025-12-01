@@ -2,6 +2,13 @@
 import * as z from "zod"
 import type { FormSubmitEvent } from "@nuxt/ui"
 
+definePageMeta( {
+  layout     : "admin",
+  middleware : "auth",
+} )
+
+const router = useRouter()
+
 const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
 const MIN_DIMENSIONS = { width: 200, height: 200 }
 const MAX_DIMENSIONS = { width: 4096, height: 4096 }
@@ -82,9 +89,9 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
 
   try {
     const formData = new FormData()
-    Object.keys( state ).forEach( ( key )=>{
+    Object.keys( state ).forEach( ( key ) => {
       if ( state[key as keyof typeof state] )
-      formData.append( key, state[key as keyof typeof state] as Blob )
+        formData.append( key, state[key as keyof typeof state] as Blob )
     } )
 
     await $fetch<{ url: string }>( "/api/products/create", {
@@ -94,6 +101,8 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
 
     toast.add( { title: "Sukses", description: `Sukses menambahkan produk ${event.data.name}`, color: "success" } )
     open.value = false
+    isLoading.value = false
+    router.push( "/admin" )
   } catch ( error: unknown ) {
     const err = error as Error
     toast.add( {
@@ -108,74 +117,83 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Tambah Produk" description="Tambahkan produk ke database">
-    <UButton label="Tambah Produk" icon="i-lucide-plus" color="neutral" />
+  <UDashboardPanel id="home">
+    <template #header>
+      <UDashboardNavbar title="Produk" :ui="{ right: 'gap-3' }">
+        <template #leading>
+          <UDashboardSidebarCollapse />
+        </template>
+      </UDashboardNavbar>
+    </template>
 
     <template #body>
-      <UForm
-        :schema="schema"
-        :state="state"
-        class="space-y-4"
-        @submit="onSubmit">
-        <UFormField label="Gambar" name="image">
-          <UFileUpload
-            v-model="state.image"
-            accept="image/*"
-            :max-files="1"
-            label="Pilih gambar"
-            description="PNG, JPG, atau WEBP (maks 2 MB)"
-            class="w-full max-w-xs aspect-square" />
-        </UFormField>
+      <div>
+        <UForm
+          :schema="schema"
+          :state="state"
+          class="space-y-4"
+          @submit="onSubmit">
+          <UFormField label="Gambar" name="image">
+            <UFileUpload
+              v-model="state.image"
+              accept="image/*"
+              :max-files="1"
+              label="Pilih gambar"
+              description="PNG, JPG, atau WEBP (maks 2 MB)"
+              class="w-full max-w-xs aspect-square" />
+          </UFormField>
 
 
-        <UFormField label="Nama Produk" name="name">
-          <UInput v-model="state.name" placeholder="Galvalum 0.30" class="w-full" />
-        </UFormField>
+          <UFormField label="Nama Produk" name="name">
+            <UInput v-model="state.name" placeholder="Galvalum 0.30" class="w-full" />
+          </UFormField>
 
-        <UFormField label="Slug" name="slug">
-          <UInput v-model="state.slug" placeholder="galvalum-030-zenium" class="w-full" />
-        </UFormField>
+          <UFormField label="Slug" name="slug">
+            <UInput v-model="state.slug" placeholder="galvalum-030-zenium" class="w-full" />
+          </UFormField>
 
-        <UFormField label="Deskripsi" name="description">
-          <UTextarea
-            v-model="state.description"
-            placeholder="Lapisan aluminium dan zinc yang melindungi dari karat..."
-            class="w-full" />
-        </UFormField>
+          <UFormField label="Deskripsi" name="description">
+            <UTextarea
+              v-model="state.description"
+              placeholder="Lapisan aluminium dan zinc yang melindungi dari karat..."
+              class="w-full" />
+          </UFormField>
 
-        <UFormField label="Kategori" name="category">
-          <UInput v-model="state.category" placeholder="Galvalum" class="w-full" />
-        </UFormField>
+          <UFormField label="Kategori" name="category">
+            <UInput v-model="state.category" placeholder="Galvalum" class="w-full" />
+          </UFormField>
 
-        <UFormField label="Harga (Rp)" name="price">
-          <UInput
-            v-model="state.price"
-            type="number"
-            placeholder="40000"
-            class="w-full" />
-        </UFormField>
+          <UFormField label="Harga (Rp)" name="price">
+            <UInput
+              v-model="state.price"
+              type="number"
+              placeholder="40000"
+              class="w-full" />
+          </UFormField>
 
-        <UFormField label="Satuan" name="unit">
-          <UInput v-model="state.unit" placeholder="m" class="w-full" />
-        </UFormField>
+          <UFormField label="Satuan" name="unit">
+            <UInput v-model="state.unit" placeholder="m" class="w-full" />
+          </UFormField>
 
-        <UFormField label="Brand" name="brand">
-          <UInput v-model="state.brand" placeholder="Zenium" class="w-full" />
-        </UFormField>
-        <div class="flex justify-end gap-2">
-          <UButton
-            label="Batal"
-            color="primary"
-            variant="subtle"
-            @click="open = false" />
-          <UButton
-            label="Buat Produk"
-            color="neutral"
-            variant="solid"
-            type="submit"
-            :loading="isLoading"/>
-        </div>
-      </UForm>
+          <UFormField label="Brand" name="brand">
+            <UInput v-model="state.brand" placeholder="Zenium" class="w-full" />
+          </UFormField>
+          <div class="flex justify-end gap-2">
+            <UButton
+              label="Batal"
+              color="primary"
+              variant="subtle"
+              @click="open = false" />
+            <UButton
+              label="Buat Produk"
+              color="neutral"
+              variant="solid"
+              type="submit"
+              :loading="isLoading" />
+          </div>
+        </UForm>
+
+      </div>
     </template>
-  </UModal>
+  </UDashboardPanel>
 </template>
