@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import * as z from "zod"
 import type { FormSubmitEvent } from "@nuxt/ui"
+import type { Category } from "~~/shared/types/product"
+import type { ApiSuccess } from "~~/shared/types"
 
 definePageMeta( {
   layout     : "admin",
@@ -75,6 +77,7 @@ const schema = z.object( {
 
 
 const open = ref( false )
+const showCategoryModal = ref( false )
 
 type Schema = z.output<typeof schema>
 
@@ -120,6 +123,23 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
     isLoading.value = false
   }
 }
+
+
+/**
+ * Categories
+ */
+
+const { data: categories, pending: categoriesPending } = useFetch<ApiSuccess<Category[]>>( "/api/categories", {
+  server : false,
+  key    : "categories",
+} )
+
+const categoryItems = computed( () => {
+  return categories.value?.data.length ? categories.value?.data.map( ( category ) => ( {
+    label : category.name,
+    value : category.name,
+  } ) ) : []
+} )
 </script>
 
 <template>
@@ -166,7 +186,20 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
           </UFormField>
 
           <UFormField label="Kategori" name="category">
-            <UInput v-model="state.category" placeholder="Galvalum" class="w-full" />
+            <ClientOnly>
+              <USelect
+                v-model="state.category"
+                placeholder="Galvalum"
+                :items="categoryItems"
+                class="w-full"
+                :loading="categoriesPending" />
+            </ClientOnly>
+
+            <UButton
+              color="neutral"
+              size="xs"
+              class="mt-2"
+              @click="showCategoryModal = true">Kelola Kategori</UButton>
           </UFormField>
 
           <UFormField label="Harga (Rp)" name="price">
@@ -189,7 +222,7 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
               label="Batal"
               color="primary"
               variant="subtle"
-              @click="open = false" />
+              to="/admin" />
             <UButton
               label="Buat Produk"
               color="neutral"
@@ -198,8 +231,9 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
               :loading="isLoading" />
           </div>
         </UForm>
-
+        <AdminCategoriesModal v-model:open="showCategoryModal" />
       </div>
     </template>
   </UDashboardPanel>
+
 </template>
