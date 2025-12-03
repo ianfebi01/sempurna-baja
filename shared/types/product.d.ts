@@ -4,8 +4,14 @@ export type Product = {
   name: string
   slug: string
   description: string
-  category: string
+  category: ObjectId
   price: number
   unit: string
-  brand: string
+  brand: ObjectId
+}
+
+export type Category = {
+  _id: ObjectId
+  name: string
+  slug: string
 }

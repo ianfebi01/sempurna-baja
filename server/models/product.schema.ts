@@ -25,7 +25,8 @@ export const ProductSchema = defineMongooseModel<Product>( {
       type: "string",
     },
     category: {
-      type     : "string",
+      type     : "ObjectId",
+      ref      : "Category",
       required : true,
       index    : true,
     },
@@ -40,9 +41,10 @@ export const ProductSchema = defineMongooseModel<Product>( {
       default : "pcs",
     },
     brand: {
-      type    : "string",
-      default : "Generic",
-      index   : true,
+      type     : "ObjectId",
+      ref      : "Brand",
+      required : true,
+      index    : true,
     },
   },
   options: {
@@ -54,6 +56,6 @@ export const ProductSchema = defineMongooseModel<Product>( {
     schema.index( { name: 1, price: 1 } )
 
     // Optional: text search index
-    // schema.index({ name: 'text', description: 'text' })
+    schema.index( { name: "text", description: "text" } )
   },
 } )
