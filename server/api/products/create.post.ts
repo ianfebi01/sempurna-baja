@@ -91,7 +91,7 @@ export default defineApi( async ( event ) => {
     // 🔹 pakai native FormData dari Node 18+ (Nitro sudah support)
     const formData = new FormData()
     if ( imagePart.filename )
-    formData.append( "file", new Blob( [buf], { type: imagePart.type || "image/jpeg" } ), imagePart.filename )
+      formData.append( "file", new Blob( [buf], { type: imagePart.type || "image/jpeg" } ), imagePart.filename )
 
     // 🔹 panggil endpoint upload internal (via fetch absolute URL)
     const baseUrl = process.env.NUXT_PUBLIC_BASE_URL || "http://localhost:3000"
@@ -110,20 +110,7 @@ export default defineApi( async ( event ) => {
   }
 
   // save
-  // const product = await new ProductSchema( {
-  //   name        : parsed.data.name,
-  //   slug,
-  //   description : parsed.data.description,
-  //   category    : parsed.data.category,
-  //   price       : parsed.data.price,
-  //   unit        : parsed.data.unit,
-  //   brand       : parsed.data.brand,
-  //   image       : imageUrl, // URL from storage
-  // } ).save()
-
-  // return product
-
-  return {
+  const product = await new ProductSchema( {
     name        : parsed.data.name,
     slug,
     description : parsed.data.description,
@@ -132,6 +119,11 @@ export default defineApi( async ( event ) => {
     unit        : parsed.data.unit,
     brand       : parsed.data.brand,
     image       : imageUrl, // URL from storage
+  } ).save()
 
+  // return product
+
+  return {
+    ...product,
   }
 } )

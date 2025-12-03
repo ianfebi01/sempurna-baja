@@ -33,7 +33,7 @@ const schema = z.object( {
     .refine( ( file ) => file.size <= MAX_FILE_SIZE, {
       message: `Ukuran gambar terlalu besar. Silakan pilih gambar yang ukurannya kurang dari ${formatBytes( MAX_FILE_SIZE )}.`,
     } )
-    .refine( ( file ) => ACCEPTED_IMAGE_TYPES.includes( file.type ), {
+    .refine( ( file ) => ACCEPTED_IMAGE_TYPES.includes( file?.type ), {
       message: "Format gambar tidak valid. Format yang diperbolehkan: JPEG, PNG, atau WebP.",
     } )
     .refine(
@@ -58,13 +58,19 @@ const schema = z.object( {
         message: `Dimensi gambar tidak sesuai. Silakan unggah gambar dengan dimensi antara ${MIN_DIMENSIONS.width}x${MIN_DIMENSIONS.height} hingga ${MAX_DIMENSIONS.width}x${MAX_DIMENSIONS.height} piksel.`,
       },
     ),
-  name        : z.string().min( 2, "Nama terlalu pendek" ),
-  slug        : z.string().min( 2, "Slug terlalu pendek" ),
-  description : z.string().min( 10, "Deskripsi terlalu pendek" ),
-  category    : z.string().min( 2, "Kategori terlalu pendek" ),
-  price       : z.number().min( 1000, "Harga minimal adalah 1000" ),
-  unit        : z.string().min( 1, "Satuan wajib diisi" ),
-  brand       : z.string().min( 2, "Brand terlalu pendek" ),
+  name : z.string().min( 2, "Nama terlalu pendek" ),
+  slug : z.string().min( 2, "Slug terlalu pendek" )
+    .max( 100, "Slug maksimal 100 karakter" )
+    .regex(
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+      "Slug hanya boleh huruf kecil, angka, dan tanda minus. Tidak boleh diawali/diakhiri dengan '-' atau ada '--'",
+    ),
+  description: z.string().min( 10, "Deskripsi terlalu pendek" )
+    .max( 5000, "Deskripsi maksimal 5000 karakter" ),
+  category : z.string().min( 2, "Kategori terlalu pendek" ),
+  price    : z.number().min( 1000, "Harga minimal adalah 1000" ),
+  unit     : z.string().min( 1, "Satuan wajib diisi" ),
+  brand    : z.string().min( 2, "Brand terlalu pendek" ),
 } )
 
 
@@ -117,7 +123,7 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
 </script>
 
 <template>
-  <UDashboardPanel id="home">
+  <UDashboardPanel id="add-product">
     <template #header>
       <UDashboardNavbar title="Produk" :ui="{ right: 'gap-3' }">
         <template #leading>
