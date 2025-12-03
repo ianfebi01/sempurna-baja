@@ -26,7 +26,7 @@
           @update:model-value="table?.tableApi?.getColumn('name')?.setFilterValue($event)" />
 
         <div class="flex flex-wrap items-center gap-1.5">
-          <CustomersDeleteModal :count="table?.tableApi?.getFilteredSelectedRowModel().rows.length">
+          <!-- <CustomersDeleteModal :count="table?.tableApi?.getFilteredSelectedRowModel().rows.length">
             <UButton
               v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
               label="Delete"
@@ -39,7 +39,7 @@
                 </UKbd>
               </template>
             </UButton>
-          </CustomersDeleteModal>
+          </CustomersDeleteModal> -->
 
           <USelect
             v-model="statusFilter"
@@ -78,27 +78,29 @@
         </div>
       </div>
 
-      <UTable
-        ref="table"
-        v-model:column-filters="columnFilters"
-        v-model:column-visibility="columnVisibility"
-        v-model:row-selection="rowSelection"
-        v-model:pagination="pagination"
-        :pagination-options="{
-          getPaginationRowModel: getPaginationRowModel()
-        }"
-        class="shrink-0"
-        :data="data"
-        :columns="columns"
-        :loading="status === 'pending'"
-        :ui="{
-          base: 'table-fixed border-separate border-spacing-0',
-          thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
-          tbody: '[&>tr]:last:[&>td]:border-b-0',
-          th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
-          td: 'border-b border-default',
-          separator: 'h-0'
-        }" />
+      <ClientOnly>
+        <UTable
+          ref="table"
+          v-model:column-filters="columnFilters"
+          v-model:column-visibility="columnVisibility"
+          v-model:row-selection="rowSelection"
+          v-model:pagination="pagination"
+          :pagination-options="{
+            getPaginationRowModel: getPaginationRowModel()
+          }"
+          class="shrink-0"
+          :data="rows"
+          :columns="columns"
+          :loading="status === 'pending'"
+          :ui="{
+            base: 'table-fixed border-separate border-spacing-0',
+            thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+            tbody: '[&>tr]:last:[&>td]:border-b-0',
+            th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+            td: 'border-b border-default',
+            separator: 'h-0'
+          }" />
+      </ClientOnly>
 
       <div class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto">
         <div class="text-sm text-muted">
@@ -123,6 +125,7 @@ import type { TableColumn } from "@nuxt/ui"
 import { upperFirst } from "scule"
 import { getPaginationRowModel } from "@tanstack/table-core"
 import type { Product } from "#shared/types/product"
+import type { ApiSuccess } from "~~/shared/types"
 
 definePageMeta( {
   layout     : "admin",
@@ -144,10 +147,12 @@ const columnFilters = ref( [{
 const columnVisibility = ref()
 const rowSelection = ref()
 
-const { data, status } = await useFetch<Product[]>( "/api/products", {
-  lazy: true,
+const { data, status } = await useFetch<ApiSuccess<Product[]>>( "/api/products", {
+  lazy   : true,
+  server : true,
 } )
 
+const rows = computed( () => data.value?.data || [] )
 
 const columns: TableColumn<Product>[] = [
   // Select column
