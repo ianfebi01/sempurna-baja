@@ -15,3 +15,9 @@ export type Category = {
   name: string
   slug: string
 }
+
+export type Brand = {
+  _id: ObjectId
+  name: string
+  slug: string
+}

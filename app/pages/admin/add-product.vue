@@ -78,6 +78,7 @@ const schema = z.object( {
 
 const open = ref( false )
 const showCategoryModal = ref( false )
+const showBrandModal = ref( false )
 
 type Schema = z.output<typeof schema>
 
@@ -124,7 +125,6 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
   }
 }
 
-
 /**
  * Categories
  */
@@ -137,6 +137,21 @@ const categoryItems = computed( () => {
   return categories.value?.data.length ? categories.value?.data.map( ( category ) => ( {
     label : category.name,
     value : category.name,
+  } ) ) : []
+} )
+
+/**
+ * Brand
+ */
+
+const { data: brands, pending: brandsPending } = useFetch<ApiSuccess<Brand[]>>( "/api/brands", {
+  key: "brands",
+} )
+
+const brandItems = computed( () => {
+  return brands.value?.data.length ? brands.value?.data.map( ( brand ) => ( {
+    label : brand.name,
+    value : brand.name,
   } ) ) : []
 } )
 </script>
@@ -186,7 +201,7 @@ const categoryItems = computed( () => {
 
           <UFormField label="Kategori" name="category">
             <USelect
-              v-if="categoryItems && categoryItems.length"
+              v-if="categoryItems"
               v-model="state.category"
               placeholder="Galvalum"
               :items="categoryItems"
@@ -201,10 +216,15 @@ const categoryItems = computed( () => {
           </UFormField>
 
           <UFormField label="Harga (Rp)" name="price">
-            <UInput
+            <UInputNumber
               v-model="state.price"
-              type="number"
               placeholder="40000"
+              :format-options="{
+                style: 'currency',
+                currency: 'IDR',
+                currencyDisplay: 'code',
+                currencySign: 'accounting'
+              }"
               class="w-full" />
           </UFormField>
 
@@ -213,7 +233,20 @@ const categoryItems = computed( () => {
           </UFormField>
 
           <UFormField label="Brand" name="brand">
-            <UInput v-model="state.brand" placeholder="Zenium" class="w-full" />
+            <USelect
+              v-if="brandItems"
+              v-model="state.brand"
+              placeholder="Zenium"
+              :items="brandItems"
+              class="w-full"
+              :loading="brandsPending" />
+
+            <UButton
+              color="neutral"
+              size="xs"
+              class="mt-2"
+              @click="showBrandModal = true">Kelola Brand</UButton>
+
           </UFormField>
           <div class="flex justify-end gap-2">
             <UButton
@@ -230,6 +263,7 @@ const categoryItems = computed( () => {
           </div>
         </UForm>
         <AdminCategoriesModal v-model:open="showCategoryModal" />
+        <AdminBrandsModal v-model:open="showBrandModal" />
       </div>
     </template>
   </UDashboardPanel>
