@@ -38,19 +38,14 @@
                   {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length }}
                 </UKbd>
               </template>
-            </UButton>
-          </CustomersDeleteModal> -->
-
+</UButton>
+</CustomersDeleteModal> -->
           <USelect
-            v-model="statusFilter"
-            :items="[
-              { label: 'All', value: 'all' },
-              { label: 'Subscribed', value: 'subscribed' },
-              { label: 'Unsubscribed', value: 'unsubscribed' },
-              { label: 'Bounced', value: 'bounced' }
-            ]"
+            v-model="categoryFilter"
+            :items="categories"
+            :loading="categoriesPending"
             :ui="{ trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200' }"
-            placeholder="Filter status"
+            placeholder="Filter kategori"
             class="min-w-28" />
           <UDropdownMenu
             :items="table?.tableApi
@@ -210,7 +205,7 @@ const columns: TableColumn<Product>[] = [
         } ),
         h( "div", undefined, [
           h( "p", { class: "font-medium text-highlighted" }, product.name ),
-          h( "p", { class: "text-sm text-muted" }, product.brand ),
+          h( "p", { class: "text-sm text-muted" }, product.brand.name ),
         ] ),
       ] )
     },
@@ -224,8 +219,14 @@ const columns: TableColumn<Product>[] = [
 
   // Category
   {
+    id          : "category",
     accessorKey : "category",
     header      : "Kategori",
+    cell        : ( { row } ) => row.original.category.name,
+    filterFn    : ( row, id, filterValue ) => {
+      if ( filterValue === "all" ) return true
+      return row.original.category._id === filterValue
+    },
   },
 
   // Price
@@ -310,18 +311,35 @@ const columns: TableColumn<Product>[] = [
   },
 ]
 
-const statusFilter = ref( "all" )
+// Categories
 
-watch( () => statusFilter.value, ( newVal ) => {
+const { data: categoriesData, pending: categoriesPending } = useFetch<{ data: Category[] }>( "/api/categories", {
+  server : true,
+  key    : "categories",
+} )
+
+const categories = computed( () => [
+  { label: "Semua Kategori", value: "all" },
+  ...( Array.isArray( categoriesData.value?.data )
+    ? categoriesData.value.data.map( ( category ) => ( {
+      label : category.name,
+      value : category._id,
+    } ) )
+    : [] ),
+] )
+
+const categoryFilter = ref( "all" )
+
+watch( () => categoryFilter.value, ( newVal ) => {
   if ( !table?.value?.tableApi ) return
 
-  const statusColumn = table.value.tableApi.getColumn( "status" )
-  if ( !statusColumn ) return
+  const categoryColumn = table.value.tableApi.getColumn( "category" )
+  if ( !categoryColumn ) return
 
   if ( newVal === "all" ) {
-    statusColumn.setFilterValue( undefined )
+    categoryColumn.setFilterValue( undefined )
   } else {
-    statusColumn.setFilterValue( newVal )
+    categoryColumn.setFilterValue( newVal )
   }
 } )
 

@@ -10,7 +10,7 @@ export default defineApi( async ( event ) => {
     }
 
     // get product
-    const product = await ProductSchema.find( )
+    const product = await ProductSchema.find( ).populate( "brand" ).populate( "category" ).lean( )
 
     return product
 } )
