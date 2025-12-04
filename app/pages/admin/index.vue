@@ -309,7 +309,7 @@ const columns: TableColumn<Product>[] = [
                   window.open( route.href, "_blank" )
                 },
               },
-              { label: "Edit", icon: "i-lucide-pencil", onSelect: () => console.log( "Edit", row.original ) },
+              { label: "Edit", icon: "i-lucide-pencil", onSelect: () => router.push( `/admin/edit-product/${row.original._id}` ) },
               { label: "Delete", icon: "i-lucide-trash", onSelect: () => promptDeleteProduct( row.original ) },
             ],
           },
