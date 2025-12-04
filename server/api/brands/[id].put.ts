@@ -6,19 +6,19 @@ export default defineApi( async ( event ) => {
   const me = await requireAuth( event )
   const email = me?.email
   if ( !email ) {
-    return fail( 401, "Unauthorized", "UNAUTHORIZED" )
+    return fail( 401, "Tidak diizinkan.", "UNAUTHORIZED" )
   }
 
   // Get Id
   const id = event.context.params?.id
   if ( !id ) {
-    return fail( 400, "Invalid category ID", "BAD_REQUEST" )
+    return fail( 400, "ID kategori tidak valid.", "BAD_REQUEST" )
   }
 
   // Parse body
   const body = await readBody( event )
   if ( !body ) {
-    return fail( 400, "Invalid body", "BAD_REQUEST" )
+    return fail( 400, "Data tidak valid.", "BAD_REQUEST" )
   }
 
   // Validate

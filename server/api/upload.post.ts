@@ -7,18 +7,18 @@ export default defineEventHandler( async ( event ) => {
     const folder = "sempurna-baja"
 
     if ( !file ) {
-        throw createError( { statusCode: 400, statusMessage: "No file uploaded" } )
+        throw createError( { statusCode: 400, statusMessage: "Tidak ada file yang diunggah." } )
     }
 
     // ✅ Limit 2 MB for Vercel safety
     const maxBytes = 2 * 1024 * 1024
     if ( file.data.byteLength > maxBytes ) {
-        throw createError( { statusCode: 413, statusMessage: "File too large (max 4 MB)" } )
+        throw createError( { statusCode: 413, statusMessage: "Ukuran file terlalu besar (maksimal 2 MB)." } )
     }
 
     // ✅ Validate image MIME
     if ( !file.type?.startsWith( "image/" ) ) {
-        throw createError( { statusCode: 400, statusMessage: "Invalid file type" } )
+        throw createError( { statusCode: 400, statusMessage: "Tipe file tidak valid, hanya gambar diperbolehkan." } )
     }
 
     // 🔐 Cloudinary config

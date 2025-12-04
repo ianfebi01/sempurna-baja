@@ -8,13 +8,13 @@ export default defineApi( async ( event ) => {
   const me = await requireAuth( event )
   const email = me?.email
   if ( !email ) {
-    return fail( 401, "Unauthorized", "UNAUTHORIZED" )
+    return fail( 401, "Tidak diizinkan.", "UNAUTHORIZED" )
   }
 
   // Parse body
   const body = await readBody( event )
   if ( !body ) {
-    return fail( 400, "Invalid body", "BAD_REQUEST" )
+    return fail( 400, "Data tidak valid.", "BAD_REQUEST" )
   }
 
   // Validate
@@ -36,7 +36,7 @@ export default defineApi( async ( event ) => {
   // Slug uniqueness
   const existing = await CategorySchema.findOne( { slug: parsed.data.slug } )
   if ( existing ) {
-    return fail( 409, `Slug "${parsed.data.slug}" already exists.` )
+    return fail( 409, `Slug "${parsed.data.slug}" sudah digunakan.` )
   }
 
   // Save

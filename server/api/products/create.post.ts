@@ -21,7 +21,7 @@ export default defineApi( async ( event ) => {
   // read form
   const form = await readMultipartFormData( event )
   if ( !form ) {
-    return fail( 400, "Invalid form data", "BAD_REQUEST" )
+    return fail( 400, "Data form tidak valid.", "BAD_REQUEST" )
   }
 
   // split parts into text + file
@@ -43,7 +43,7 @@ export default defineApi( async ( event ) => {
   const email = me?.email
   const user = await UserSchema.findOne( { email } )
   if ( !user ) {
-    fail( 401, "Unauthorized", "UNAUTHORIZED" )
+    fail( 401, "Tidak diizinkan.", "UNAUTHORIZED" )
   }
 
   // zod (text fields only)
@@ -60,7 +60,7 @@ export default defineApi( async ( event ) => {
   const parsed = textSchema.safeParse( data )
   if ( !parsed.success ) {
     const first = parsed.error.issues[0]
-    throw createError( { statusCode: 400, statusMessage: first.message } )
+    throw createError( { statusCode: 400, statusMessage: first.message } ) // Sudah Bahasa Indonesia
   }
 
   // slug: sanitize + uniqueness
@@ -71,7 +71,7 @@ export default defineApi( async ( event ) => {
 
   const existing = await ProductSchema.findOne( { slug } )
   if ( existing ) {
-    return fail( 409, `Slug "${slug}" already exists.` )
+    return fail( 409, `Slug "${slug}" sudah ada.` )
   }
 
   // file validations (server-side)

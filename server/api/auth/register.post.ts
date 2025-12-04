@@ -12,7 +12,7 @@ export default defineEventHandler( async ( event ) => {
   } catch ( error ) {
     console.log( error )
     throw createError( {
-      statusMessage: "user already registered.",
+      statusMessage: "Pengguna sudah terdaftar.",
     } )
   }
 

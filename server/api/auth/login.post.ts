@@ -9,7 +9,7 @@ export default defineApi( async ( event ) => {
 
   if ( !email || !password ) {
     throw createError( {
-      statusMessage: "required field",
+      statusMessage: "Email dan password wajib diisi.",
     } )
   }
 
