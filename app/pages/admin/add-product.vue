@@ -130,8 +130,7 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
  */
 
 const { data: categories, pending: categoriesPending } = useFetch<ApiSuccess<Category[]>>( "/api/categories", {
-  server : false,
-  key    : "categories",
+  key: "categories",
 } )
 
 const categoryItems = computed( () => {
@@ -186,14 +185,13 @@ const categoryItems = computed( () => {
           </UFormField>
 
           <UFormField label="Kategori" name="category">
-            <ClientOnly>
-              <USelect
-                v-model="state.category"
-                placeholder="Galvalum"
-                :items="categoryItems"
-                class="w-full"
-                :loading="categoriesPending" />
-            </ClientOnly>
+            <USelect
+              v-if="categoryItems && categoryItems.length"
+              v-model="state.category"
+              placeholder="Galvalum"
+              :items="categoryItems"
+              class="w-full"
+              :loading="categoriesPending" />
 
             <UButton
               color="neutral"
