@@ -2,7 +2,7 @@
 import * as z from "zod"
 import type { FormSubmitEvent } from "@nuxt/ui"
 import type { Category } from "~~/shared/types/product"
-import type { ApiSuccess } from "~~/shared/types"
+import type { ApiError, ApiSuccess } from "~~/shared/types"
 
 definePageMeta( {
   layout     : "admin",
@@ -114,12 +114,11 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
     isLoading.value = false
     router.push( "/admin" )
   } catch ( error: unknown ) {
-    const err = error as Error
-    toast.add( {
-      title       : "Gagal menambahkan produk.",
-      description : err.message,
-      color       : "error",
-    } )
+    let err: ApiError
+    if ( typeof error === "object" && error !== null && "data" in error ) {
+      err = ( error ).data as ApiError
+      toast.add( { title: "Gagal menambahkan produk.", description: err.error.message, color: "error" } )
+    }
   } finally {
     isLoading.value = false
   }
@@ -136,7 +135,7 @@ const { data: categories, pending: categoriesPending } = useFetch<ApiSuccess<Cat
 const categoryItems = computed( () => {
   return categories.value?.data.length ? categories.value?.data.map( ( category ) => ( {
     label : category.name,
-    value : category.name,
+    value : category._id,
   } ) ) : []
 } )
 
@@ -151,7 +150,7 @@ const { data: brands, pending: brandsPending } = useFetch<ApiSuccess<Brand[]>>( 
 const brandItems = computed( () => {
   return brands.value?.data.length ? brands.value?.data.map( ( brand ) => ( {
     label : brand.name,
-    value : brand.name,
+    value : brand._id,
   } ) ) : []
 } )
 </script>
