@@ -12,13 +12,19 @@ export default defineApi( async ( event ) => {
   // Get Id
   const id = event.context.params?.id
   if ( !id ) {
-    return fail( 400, "Invalid category ID", "BAD_REQUEST" )
+    return fail( 400, "Kategori tidak valid", "BAD_REQUEST" )
+  }
+
+  // Check if any product uses this category
+  const usedByProduct = await ProductSchema.exists( { category: id } )
+  if ( usedByProduct ) {
+    return fail( 400, "Kategori sedang digunakan oleh produk lain", "CATEGORY_IN_USE" )
   }
 
   // Delete
   const category = await CategorySchema.findByIdAndDelete( id )
   if ( !category ) {
-    return fail( 404, "Category not found", "NOT_FOUND" )
+    return fail( 404, "Kategori tidak ditemukan", "NOT_FOUND" )
   }
 
   return {
