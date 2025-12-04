@@ -111,6 +111,17 @@
             @update:page="(p: number) => table?.tableApi?.setPageIndex(p - 1)" />
         </div>
       </div>
+      <UModal
+        v-model:open="showDeleteConfirm"
+        title="Konfirmasi Hapus"
+        description="Anda yakin ingin menghapus produk ini?"
+        :ui="{ footer: 'justify-end' }">
+        <template #footer>
+          <UButton variant="ghost" @click="showDeleteConfirm = false">Batal</UButton>
+          <UButton color="error" :loading="deletingId === productToDelete?._id" @click="confirmDeleteProduct">Hapus
+          </UButton>
+        </template>
+      </UModal>
     </template>
   </UDashboardPanel>
 </template>
@@ -120,7 +131,7 @@ import type { TableColumn } from "@nuxt/ui"
 import { upperFirst } from "scule"
 import { getPaginationRowModel } from "@tanstack/table-core"
 import type { Product } from "#shared/types/product"
-import type { ApiSuccess } from "~~/shared/types"
+import type { ApiError, ApiSuccess } from "~~/shared/types"
 
 definePageMeta( {
   layout     : "admin",
@@ -132,6 +143,8 @@ const UButton = resolveComponent( "UButton" )
 const UTooltip = resolveComponent( "UTooltip" )
 const UDropdownMenu = resolveComponent( "UDropdownMenu" )
 const UCheckbox = resolveComponent( "UCheckbox" )
+
+const toast = useToast()
 
 const table = useTemplateRef( "table" )
 
@@ -145,6 +158,7 @@ const rowSelection = ref()
 const { data, status } = await useFetch<ApiSuccess<Product[]>>( "/api/products", {
   lazy   : true,
   server : true,
+  key    : "products",
 } )
 
 const rows = computed( () => data.value?.data || [] )
@@ -296,7 +310,7 @@ const columns: TableColumn<Product>[] = [
                 },
               },
               { label: "Edit", icon: "i-lucide-pencil", onSelect: () => console.log( "Edit", row.original ) },
-              { label: "Delete", icon: "i-lucide-trash", onSelect: () => console.log( "Delete", row.original ) },
+              { label: "Delete", icon: "i-lucide-trash", onSelect: () => promptDeleteProduct( row.original ) },
             ],
           },
           () =>
@@ -347,4 +361,42 @@ const pagination = ref( {
   pageIndex : 0,
   pageSize  : 10,
 } )
+
+/**
+ * Delete product
+ */
+const showDeleteConfirm = ref( false )
+const deletingId = ref<string | null>( null )
+const productToDelete = ref<Product | null>( null )
+
+async function deleteProduct( id: string ) {
+  deletingId.value = id
+  try {
+    await $fetch( `/api/products/${id}`, {
+      method: "delete",
+    } )
+    toast.add( { title: "Sukses", description: "Produk dihapus", color: "success" } )
+    refreshNuxtData( "products" )
+  } catch ( error: unknown ) {
+    let err: ApiError
+    if ( typeof error === "object" && error !== null && "data" in error ) {
+      err = ( error ).data as ApiError
+      toast.add( { title: "Gagal menghapus produk.", description: err.error.message, color: "error" } )
+    }
+  } finally {
+    deletingId.value = null
+  }
+}
+
+async function confirmDeleteProduct() {
+  if ( !productToDelete.value ) return
+  await deleteProduct( productToDelete.value._id )
+  showDeleteConfirm.value = false
+  productToDelete.value = null
+}
+
+function promptDeleteProduct( product: Product ) {
+  productToDelete.value = product
+  showDeleteConfirm.value = true
+}
 </script>
