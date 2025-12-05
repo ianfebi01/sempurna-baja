@@ -141,12 +141,12 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
         formData.append( key, state[key as keyof typeof state] as Blob )
     } )
 
-    await $fetch<{ url: string }>( "/api/products/create", {
-      method : "POST",
+    await $fetch<{ url: string }>( `/api/products/${productId}`, {
+      method : "put",
       body   : formData,
     } )
 
-    toast.add( { title: "Sukses", description: `Sukses menambahkan produk ${event.data.name}`, color: "success" } )
+    toast.add( { title: "Sukses", description: `Sukses mengubah produk ${event.data.name}`, color: "success" } )
     open.value = false
     isLoading.value = false
     router.push( "/admin" )
@@ -154,7 +154,7 @@ async function onSubmit( event: FormSubmitEvent<Schema> ) {
     let err: ApiError
     if ( typeof error === "object" && error !== null && "data" in error ) {
       err = ( error ).data as ApiError
-      toast.add( { title: "Gagal menambahkan produk.", description: err.error.message, color: "error" } )
+      toast.add( { title: "Gagal mengubah produk.", description: err.error.message, color: "error" } )
     }
   } finally {
     isLoading.value = false
@@ -210,7 +210,7 @@ const brandItems = computed( () => {
           :schema="schema"
           :state="state"
           class="space-y-4"
-          :disabled="productPending"
+          :disabled="productPending || isLoading"
           @submit="onSubmit">
           <UFormField label="Gambar" name="image">
             <UFileUpload
@@ -307,9 +307,10 @@ const brandItems = computed( () => {
               label="Batal"
               color="primary"
               variant="subtle"
+              :disabled="isLoading"
               to="/admin" />
             <UButton
-              label="Buat Produk"
+              label="Edit Produk"
               color="neutral"
               variant="solid"
               type="submit"

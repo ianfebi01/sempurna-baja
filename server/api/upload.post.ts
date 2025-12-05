@@ -43,10 +43,6 @@ export default defineEventHandler( async ( event ) => {
     body.append( "signature", signature )
     body.append( "folder", folder )
 
-
-    console.log( { cloudName, apiKey, signature, timestamp } )
-
-
     // 🚀 Upload to Cloudinary
     const res = await $fetch<{ secure_url: string }>(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
