@@ -23,23 +23,21 @@
           class="max-w-sm"
           icon="i-lucide-search"
           placeholder="Filter produk..."
-          @update:model-value="table?.tableApi?.getColumn('name')?.setFilterValue($event)" />
+          :ui="{trailing: 'pe-1'}"
+          @update:model-value="table?.tableApi?.getColumn('name')?.setFilterValue($event)" >
+          <template v-if="(table?.tableApi?.getColumn('name')?.getFilterValue() as string)?.length" #trailing>
+            <UButton
+              color="neutral"
+              variant="link"
+              size="sm"
+              icon="i-lucide-circle-x"
+              aria-label="Clear input"
+              @click="(table?.tableApi?.getColumn('name')?.setFilterValue(''))"
+            />
+          </template>
+        </UInput>
 
         <div class="flex flex-wrap items-center gap-1.5">
-          <!-- <CustomersDeleteModal :count="table?.tableApi?.getFilteredSelectedRowModel().rows.length">
-            <UButton
-              v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
-              label="Delete"
-              color="error"
-              variant="subtle"
-              icon="i-lucide-trash">
-              <template #trailing>
-                <UKbd>
-                  {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length }}
-                </UKbd>
-              </template>
-</UButton>
-</CustomersDeleteModal> -->
           <USelect
             v-model="categoryFilter"
             :items="categories"
@@ -81,7 +79,11 @@
           v-model:row-selection="rowSelection"
           v-model:pagination="pagination"
           :pagination-options="{
-            getPaginationRowModel: getPaginationRowModel()
+            getPaginationRowModel: getPaginationRowModel(),
+            manualPagination:true
+          }"
+          :column-filters-options="{
+            manualFiltering: true
           }"
           class="shrink-0"
           :data="rows"
@@ -100,14 +102,14 @@
       <div class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto">
         <div class="text-sm text-muted">
           {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }} dari
-          {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }} baris dipilih.
+          {{ data?.data?.meta?.total || 0 }} baris dipilih.
         </div>
 
         <div class="flex items-center gap-1.5">
           <UPagination
             :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
             :items-per-page="table?.tableApi?.getState().pagination.pageSize"
-            :total="table?.tableApi?.getFilteredRowModel().rows.length"
+            :total="data?.data?.meta?.total || 0"
             @update:page="(p: number) => table?.tableApi?.setPageIndex(p - 1)" />
         </div>
       </div>
@@ -130,13 +132,15 @@
 import type { TableColumn } from "@nuxt/ui"
 import { upperFirst } from "scule"
 import { getPaginationRowModel } from "@tanstack/table-core"
-import type { Product } from "#shared/types/product"
+import type { Product, ProductResponse } from "#shared/types/product"
 import type { ApiError, ApiSuccess } from "~~/shared/types"
+import { useDebounce } from "~/compossables/useDebounce"
 
 definePageMeta( {
   layout     : "admin",
   middleware : "auth",
 } )
+
 const router = useRouter()
 const UAvatar = resolveComponent( "UAvatar" )
 const UButton = resolveComponent( "UButton" )
@@ -152,16 +156,30 @@ const columnFilters = ref( [{
   id    : "name",
   value : "",
 }] )
+
 const columnVisibility = ref()
 const rowSelection = ref()
+const pagination = ref( {
+  pageIndex : 0,
+  pageSize  : 10,
+} )
+const columnFiltersDebounced = useDebounce( columnFilters, 500 )
 
-const { data, status } = await useFetch<ApiSuccess<Product[]>>( "/api/products", {
+const { data, status } = await useFetch<ApiSuccess<ProductResponse>>( "/api/products", {
   lazy   : true,
-  server : true,
+  server : false,
   key    : "products",
+  method : "GET",
+  params : {
+    page     : computed( () => pagination.value.pageIndex + 1 ),
+    pageSize : computed( () => pagination.value.pageSize ),
+    search   : computed( () => columnFiltersDebounced.value.find( ( filter ) => filter.id === "name" )?.value || "" ),
+    category : computed( () => columnFiltersDebounced.value.find( ( filter ) => filter.id === "category" )?.value || "" ),
+  },
+  watch: [ pagination, columnFiltersDebounced ],
 } )
 
-const rows = computed( () => data.value?.data || [] )
+const rows = computed( () => data.value?.data?.data || [] )
 
 const columns: TableColumn<Product>[] = [
   // Select column
@@ -355,11 +373,6 @@ watch( () => categoryFilter.value, ( newVal ) => {
   } else {
     categoryColumn.setFilterValue( newVal )
   }
-} )
-
-const pagination = ref( {
-  pageIndex : 0,
-  pageSize  : 10,
 } )
 
 /**
