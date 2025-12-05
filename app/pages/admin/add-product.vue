@@ -171,6 +171,7 @@ const brandItems = computed( () => {
           :schema="schema"
           :state="state"
           class="space-y-4"
+          :disabled="isLoading"
           @submit="onSubmit">
           <UFormField label="Gambar" name="image">
             <UFileUpload
