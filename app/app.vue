@@ -1,8 +1,11 @@
 <template>
   <div class="flex flex-col relative min-h-screen">
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+    <UApp>
+
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
+    </UApp>
   </div>
 </template>
 <script lang="ts" setup>
