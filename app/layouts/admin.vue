@@ -28,23 +28,23 @@ const profileDropdownItems = [
   ],
   [
     {
-      label : "Profile",
+      label : "Profil Saya",
       icon  : "i-ph-user-duotone",
       click : () => router.replace( { name: "profile" } ),
     },
   ],
   [
     {
-      label    : "Sign out",
+      label    : "Keluar",
       icon     : "i-ph-sign-out",
       onSelect : async () => {
         await clear()
         router.replace( { path: "/" } )
         toast.add( {
           color       : "error",
-          title       : "Logged out!",
+          title       : "Keluar!",
           icon        : "i-ph-sign-out",
-          description : "user signed out successfully.",
+          description : "Anda telah keluar dari akun Anda.",
         } )
       },
     },
@@ -101,7 +101,7 @@ const profileDropdownItems = [
               <template #account>
                 <div class="text-left w-full">
                   <p>
-                    Signed in as
+                    Masuk sebagai
                   </p>
                   <p class="truncate font-medium">
                     {{ user.email }}
