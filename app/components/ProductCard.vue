@@ -11,7 +11,7 @@
       <div class="aspect-video w-full overflow-hidden">
         <img
           :src="product.image"
-          :alt="product?.name || `sempurna baja ${product.id}`"
+          :alt="product?.name || `sempurna baja ${product._id}`"
           width="500"
           height="500"
           class="object-cover object-center w-full h-full transition-default hover:scale-105" />
