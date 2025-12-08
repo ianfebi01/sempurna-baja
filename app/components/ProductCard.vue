@@ -20,7 +20,7 @@
       <div class="p-4 md:p-6 flex flex-col flex-grow">
         <div>
           <h3>{{ product.name }}</h3>
-          <p v-if="product.brand" class="text-xs">Merk: <b>{{ product.brand }}</b></p>
+          <p v-if="product.brand" class="text-xs">Merk: <b>{{ product.brand?.name }}</b></p>
           <p v-if="product.description" class="line-clamp-3">{{ product.description }}</p>
         </div>
         <div class="flex-grow"></div>

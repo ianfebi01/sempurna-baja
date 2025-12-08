@@ -1,13 +1,13 @@
-import { defineApi, fail } from "~~/server/utils/api"
+import { defineApi } from "~~/server/utils/api"
 
 export default defineApi( async ( event ) => {
     // auth
-    const me = await requireAuth( event )
-    const email = me?.email
-    const user = await UserSchema.findOne( { email } )
-    if ( !user ) {
-        fail( 401, "Unauthorized", "UNAUTHORIZED" )
-    }
+    // const me = await requireAuth( event )
+    // const email = me?.email
+    // const user = await UserSchema.findOne( { email } )
+    // if ( !user ) {
+    //     fail( 401, "Unauthorized", "UNAUTHORIZED" )
+    // }
 
     // Query params
     const query = getQuery( event )
@@ -15,6 +15,7 @@ export default defineApi( async ( event ) => {
     const pageSize = parseInt( query.pageSize as string ) || 10
     const search = ( query.search as string ) || ""
     const category = ( query.category as string ) || ""
+    const brand = ( query.brand as string ) || ""
     const sortBy = ( query.sortBy as string ) || "createdAt"
     const sortOrder = ( query.sortOrder as string ) === "desc" ? -1 : 1
 
@@ -24,7 +25,15 @@ export default defineApi( async ( event ) => {
         filter.name = { $regex: search, $options: "i" }
     }
     if ( category && category !== "all" ) {
-        filter["category"] = category
+        const categoryArray = category.split( "," )
+        const queryCategory = category ? { $in: categoryArray } : {}
+        filter["category"] = queryCategory
+    }
+
+    if ( brand && brand !== "all" ) {
+        const brandArray = brand.split( "," )
+        const queryBrand = brand ? { $in: brandArray } : {}
+        filter["brand"] = queryBrand
     }
 
     // Count total

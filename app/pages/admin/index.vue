@@ -24,6 +24,7 @@
           icon="i-lucide-search"
           placeholder="Filter produk..."
           :ui="{trailing: 'pe-1'}"
+          :loading="true"
           @update:model-value="table?.tableApi?.getColumn('name')?.setFilterValue($event)" >
           <template v-if="(table?.tableApi?.getColumn('name')?.getFilterValue() as string)?.length" #trailing>
             <UButton

@@ -1,0 +1,15 @@
+.admin-root h1,
+.admin-root h2,
+.admin-root h3,
+.admin-root h4,
+.admin-root h5,
+.admin-root h6,
+.admin-root p,
+.admin-root .mb-4,
+.admin-root .mt-4,
+.admin-root .mx-4,
+.admin-root .my-4 {
+  margin: 0 !important;
+}
+
+/* Add more overrides as needed for admin area */
