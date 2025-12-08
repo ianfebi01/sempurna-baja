@@ -18,6 +18,7 @@ export default defineApi( async ( event ) => {
     const brand = ( query.brand as string ) || ""
     const sortBy = ( query.sortBy as string ) || "createdAt"
     const sortOrder = ( query.sortOrder as string ) === "desc" ? -1 : 1
+    const slug = ( query.slug as string ) || ""
 
     // Build filter
     const filter: Record<string, unknown> = {}
@@ -34,6 +35,10 @@ export default defineApi( async ( event ) => {
         const brandArray = brand.split( "," )
         const queryBrand = brand ? { $in: brandArray } : {}
         filter["brand"] = queryBrand
+    }
+
+    if ( slug ) {
+        filter["slug"] = slug
     }
 
     // Count total

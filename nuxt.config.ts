@@ -4,6 +4,7 @@ import products from "./app/assets/json/products.json"
 export default defineNuxtConfig( {
   compatibilityDate : "2025-07-15",
   devtools          : { enabled: true },
+  ssr               : true,
   runtimeConfig     : {
     public: {
       siteName: process.env.NUXT_SITE_NAME,
