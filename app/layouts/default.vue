@@ -1,5 +1,5 @@
 <template>
-  <div class="landing-page">
+  <div class="landing-page flex flex-col min-h-screen">
     <div class="sticky top-0 left-0 z-40 print:hidden bg-white shadow-sm">
       <Header />
     </div>
