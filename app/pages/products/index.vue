@@ -97,7 +97,7 @@
         </template>
       </div>
 
-      <div v-if="!pending" class="flex items-center justify-between gap-3 pt-4 mt-auto">
+      <div v-if="!pending && data?.data.data?.length" class="flex items-center justify-between gap-3 pt-4 mt-auto">
         <div class="text-sm text-muted">
           {{ pagination.pageSize * (pagination.pageIndex + 1) }} dari
           {{ data?.data?.meta?.total || 0 }} total.
@@ -110,6 +110,9 @@
             :total="data?.data?.meta?.total || 0"
             @update:page="(p: number) => pagination.pageIndex = p - 1" />
         </div>
+      </div>
+      <div v-if="!pending && !data?.data.data?.length" class="text-center text-muted mt-12">
+        Tidak ada produk ditemukan.
       </div>
     </div>
   </section>
