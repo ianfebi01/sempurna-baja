@@ -49,8 +49,10 @@ export default defineNuxtConfig( {
     indexable: process.env.NODE_ENV === "production",
   },
   nitro: {
-    preset    : process.env.VERCEL ? "vercel" : "static",
+    // Force Vercel serverless functions deployment (avoid static preset)
+    preset    : "vercel",
     prerender : {
+      // Keep static prerender for pages while still deploying API routes
       routes: [
         "/",
         "/products",
