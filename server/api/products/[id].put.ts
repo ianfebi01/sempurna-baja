@@ -101,7 +101,10 @@ export default defineApi( async ( event ) => {
       formData.append( "file", new Blob( [buf], { type: imagePart.type || "image/jpeg" } ), imagePart.filename )
 
     // 🔹 panggil endpoint upload internal (via fetch absolute URL)
-    const baseUrl = process.env.NUXT_PUBLIC_BASE_URL || "http://localhost:3000"
+    // Derive base URL from current request origin to avoid localhost on Vercel
+    const origin = getRequestURL( event ).origin
+    const { public: publicRuntime } = useRuntimeConfig()
+    const baseUrl = origin || publicRuntime.siteUrl || "http://localhost:3000"
 
     const res = await $fetch( `${baseUrl}/api/upload`, {
       method : "POST",
