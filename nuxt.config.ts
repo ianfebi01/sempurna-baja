@@ -1,5 +1,26 @@
 import products from "./app/assets/json/products.json"
 
+// Helper to resolve site URL for production/preview/dev
+function resolveSiteUrl () {
+  const env = process.env.VERCEL_ENV
+  const custom = process.env.NUXT_SITE_URL
+  const previewHost = process.env.VERCEL_URL
+  const dev = process.env.NUXT_DEV_URL
+  const isVercel = !!process.env.VERCEL
+
+  // Production: use custom domain
+  if ( env === "production" ) return custom
+
+  // Preview: prefer Vercel preview URL, fallback to custom if provided
+  if ( env === "preview" ) return previewHost ? `https://${previewHost}` : ( custom || "http://localhost:3000" )
+
+  // Vercel dev (env may be undefined): prefer preview host if available
+  if ( isVercel && previewHost ) return `https://${previewHost}`
+
+  // Local dev: use custom/dev override or localhost
+  return custom || dev || "http://localhost:3000"
+}
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig( {
   compatibilityDate : "2025-07-15",
@@ -7,13 +28,8 @@ export default defineNuxtConfig( {
   ssr               : true,
   runtimeConfig     : {
     public: {
-      siteName: process.env.NUXT_SITE_NAME,
-      siteUrl:
-        process.env.VERCEL_ENV === "production"
-          ? process.env.NUXT_SITE_URL // your custom domain, e.g. https://mysite.com
-          : process.env.VERCEL_ENV === "preview"
-            ? `https://${process.env.VERCEL_URL}` // Vercel preview deployments
-            : process.env.NUXT_SITE_URL || "http://localhost:3000", // local or vercel dev,
+      siteName : process.env.NUXT_SITE_NAME,
+      siteUrl  : resolveSiteUrl(),
     },
     auth: {
       mongo: {
@@ -40,19 +56,12 @@ export default defineNuxtConfig( {
     },
   },
   site: {
-    url:
-      process.env.VERCEL_ENV === "production"
-        ? process.env.NUXT_SITE_URL // your custom domain, e.g. https://mysite.com
-        : process.env.VERCEL_ENV === "preview"
-          ? `https://${process.env.VERCEL_URL}` // Vercel preview deployments
-          : process.env.NUXT_SITE_URL || "http://localhost:3000", // local or vercel dev,
-    indexable: process.env.NODE_ENV === "production",
+    url       : resolveSiteUrl(),
+    indexable : process.env.NODE_ENV === "production",
   },
   nitro: {
-    // Force Vercel serverless functions deployment (avoid static preset)
-    preset    : "vercel",
+    preset    : process.env.VERCEL ? "vercel" : "static",
     prerender : {
-      // Keep static prerender for pages while still deploying API routes
       routes: [
         "/",
         "/products",
