@@ -7,7 +7,7 @@ export default defineApi( async ( event ) => {
   // Get Id
   const id = event.context.params?.id
   if ( !id ) {
-    return fail( 400, "ID kategori tidak valid.", "BAD_REQUEST" )
+    return fail( 400, "ID produk tidak valid.", "BAD_REQUEST" )
   }
   // constants
   const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
@@ -35,7 +35,7 @@ export default defineApi( async ( event ) => {
 
   for ( const part of form ) {
     if ( !part.name ) continue
-    if ( part.name === "image" && part.filename && part.type ) {
+    if ( part.name === "image" && part.filename && part.type && part.data ) {
       imagePart = { filename: part.filename, type: part.type, data: part.data || new Uint8Array() }
     } else {
       // MultiPartData doesn't have `.value`. Decode bytes:
@@ -60,6 +60,7 @@ export default defineApi( async ( event ) => {
     price       : z.coerce.number().min( 1000, "Harga minimal adalah 1000" ),
     unit        : z.string().min( 1, "Satuan wajib diisi" ),
     brand       : z.string().min( 2, "Brand terlalu pendek" ),
+    image       : z.string().url().optional(), // keep existing when not changed
   } )
 
   const parsed = textSchema.safeParse( data )
@@ -74,11 +75,11 @@ export default defineApi( async ( event ) => {
     .replace( /[^a-z0-9]+/g, "-" )
     .replace( /^-+|-+$/g, "" )
 
-   // Slug uniqueness
-   const existing = await ProductSchema.findOne( { slug: parsed.data.slug } )
-   if ( existing && String( existing.id ) !== id ) {
-     return fail( 409, `Slug "${parsed.data.slug}" sudah digunakan.` )
-   }
+  // Slug uniqueness (use computed slug)
+  const existing = await ProductSchema.findOne( { slug } )
+  if ( existing && String( existing.id ) !== id ) {
+    return fail( 409, `Slug "${slug}" sudah digunakan.` )
+  }
 
   // file validations (server-side)
   let imageUrl: string | null = null
@@ -113,6 +114,13 @@ export default defineApi( async ( event ) => {
     }
 
     imageUrl = res.url
+  } else if ( parsed.data.image ) {
+    // when client sends existing image URL as text field
+    imageUrl = parsed.data.image
+  } else {
+    // no new image and no image field provided -> preserve existing image from DB
+    const current = await ProductSchema.findById( id ).select( "image" )
+    imageUrl = current?.image || null
   }
 
   // save
@@ -124,7 +132,7 @@ export default defineApi( async ( event ) => {
     price       : parsed.data.price,
     unit        : parsed.data.unit,
     brand       : parsed.data.brand,
-    image       : imageUrl, // URL from storage
+    image       : imageUrl, // URL from storage or preserved
   }, { new: true } )
 
   // return product

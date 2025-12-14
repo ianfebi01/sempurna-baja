@@ -41,38 +41,42 @@ const formatBytes = ( bytes: number, decimals = 2 ) => {
 }
 
 const schema = z.object( {
-  image: z
-    .instanceof( File, {
-      message: "Silakan pilih file gambar.",
-    } )
-    .refine( ( file ) => file.size <= MAX_FILE_SIZE, {
-      message: `Ukuran gambar terlalu besar. Silakan pilih gambar yang ukurannya kurang dari ${formatBytes( MAX_FILE_SIZE )}.`,
-    } )
-    .refine( ( file ) => ACCEPTED_IMAGE_TYPES.includes( file?.type ), {
-      message: "Format gambar tidak valid. Format yang diperbolehkan: JPEG, PNG, atau WebP.",
-    } )
-    .refine(
-      ( file ) =>
-        new Promise( ( resolve ) => {
-          const reader = new FileReader()
-          reader.onload = ( e ) => {
-            const img = new Image()
-            img.onload = () => {
-              const meetsDimensions =
-                img.width >= MIN_DIMENSIONS.width &&
-                img.height >= MIN_DIMENSIONS.height &&
-                img.width <= MAX_DIMENSIONS.width &&
-                img.height <= MAX_DIMENSIONS.height
-              resolve( meetsDimensions )
-            }
-            img.src = e.target?.result as string
-          }
-          reader.readAsDataURL( file )
-        } ),
-      {
-        message: `Dimensi gambar tidak sesuai. Silakan unggah gambar dengan dimensi antara ${MIN_DIMENSIONS.width}x${MIN_DIMENSIONS.height} hingga ${MAX_DIMENSIONS.width}x${MAX_DIMENSIONS.height} piksel.`,
-      },
-    ),
+  image: z.union(
+    [
+      z.instanceof( File, {
+        message: "Silakan pilih file gambar.",
+      } )
+        .refine( ( file ) => file.size <= MAX_FILE_SIZE, {
+          message: `Ukuran gambar terlalu besar. Silakan pilih gambar yang ukurannya kurang dari ${formatBytes( MAX_FILE_SIZE )}.`,
+        } )
+        .refine( ( file ) => ACCEPTED_IMAGE_TYPES.includes( file?.type ), {
+          message: "Format gambar tidak valid. Format yang diperbolehkan: JPEG, PNG, atau WebP.",
+        } )
+        .refine(
+          ( file ) =>
+            new Promise( ( resolve ) => {
+              const reader = new FileReader()
+              reader.onload = ( e ) => {
+                const img = new Image()
+                img.onload = () => {
+                  const meetsDimensions =
+                    img.width >= MIN_DIMENSIONS.width &&
+                    img.height >= MIN_DIMENSIONS.height &&
+                    img.width <= MAX_DIMENSIONS.width &&
+                    img.height <= MAX_DIMENSIONS.height
+                  resolve( meetsDimensions )
+                }
+                img.src = e.target?.result as string
+              }
+              reader.readAsDataURL( file )
+            } ),
+          {
+            message: `Dimensi gambar tidak sesuai. Silakan unggah gambar dengan dimensi antara ${MIN_DIMENSIONS.width}x${MIN_DIMENSIONS.height} hingga ${MAX_DIMENSIONS.width}x${MAX_DIMENSIONS.height} piksel.`,
+          },
+        ),
+      z.string().regex( /^https?:\/\// )], {
+    message: "Silakan pilih file gambar atau biarkan gambar awal.",
+  } ),
   name : z.string().min( 2, "Nama terlalu pendek" ),
   slug : z.string().min( 2, "Slug terlalu pendek" )
     .max( 100, "Slug maksimal 100 karakter" )
@@ -113,6 +117,7 @@ watch( productData, ( newData ) => {
     const product = newData.data
     Object.assign( state, {
       name        : product.name || "",
+      image       : product.image || "",
       slug        : product.slug || "",
       description : product.description || "",
       // eslint-disable-next-line no-underscore-dangle
@@ -192,6 +197,8 @@ const brandItems = computed( () => {
     value : brand._id,
   } ) ) : []
 } )
+
+const isNotImage = computed( () => typeof state.image !== "string" )
 </script>
 
 <template>
@@ -214,6 +221,7 @@ const brandItems = computed( () => {
           @submit="onSubmit">
           <UFormField label="Gambar" name="image">
             <UFileUpload
+              v-if="isNotImage"
               ref="fileUploadRef"
               v-model="state.image"
               accept="image/*"
@@ -224,16 +232,28 @@ const brandItems = computed( () => {
               :class="{
                 'hidden': initialImageUrl
               }" />
-            <div v-if="initialImageUrl" class="mb-2 relative group/huha w-fit h-fit">
+            <div v-else-if="typeof state.image === 'string'" class="mb-2 relative w-full max-w-xs aspect-square">
               <img
-                :src="initialImageUrl"
+                :src="state.image"
                 alt="Preview"
-                class="w-full max-w-xs aspect-square object-cover rounded"
-                @click="() => { 
-                  
-                  initialImageUrl = '' 
-                  fileUploadRef?.inputRef?.click()
+                class="w-full h-full object-cover rounded border border-muted"
+                @click="() => {
+
+                  initialImageUrl = ''
+                  state.image = undefined
                 }" />
+
+              <UButton
+                icon="lucide:x"
+                color="neutral"
+                size="xs"
+                variant="link"
+                class="font-medium inline-flex items-center disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75 transition-colors text-xs gap-1 text-inverted bg-inverted hover:bg-inverted/90 active:bg-inverted/90 disabled:bg-inverted aria-disabled:bg-inverted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-inverted absolute -top-1.5 -end-1.5 p-0 rounded-full border-2 border-bg"
+                @click="() => {
+                  initialImageUrl = ''
+                  state.image = undefined
+                }" />
+
             </div>
           </UFormField>
 
