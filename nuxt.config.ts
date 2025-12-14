@@ -64,7 +64,6 @@ export default defineNuxtConfig( {
     prerender : {
       routes: [
         "/",
-        "/products",
       ],
       failOnError: true,
     },

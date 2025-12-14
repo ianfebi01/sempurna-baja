@@ -11,9 +11,6 @@ definePageMeta( {
 
 const router = useRouter()
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fileUploadRef = ref<any | null>( null )
-
 /**
  * Get Product ID from route params
  */
@@ -197,8 +194,6 @@ const brandItems = computed( () => {
     value : brand._id,
   } ) ) : []
 } )
-
-const isNotImage = computed( () => typeof state.image !== "string" )
 </script>
 
 <template>
@@ -221,7 +216,7 @@ const isNotImage = computed( () => typeof state.image !== "string" )
           @submit="onSubmit">
           <UFormField label="Gambar" name="image">
             <UFileUpload
-              v-if="isNotImage"
+              v-if="(typeof state.image !== 'string')"
               ref="fileUploadRef"
               v-model="state.image"
               accept="image/*"
