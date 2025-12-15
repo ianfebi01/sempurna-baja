@@ -25,7 +25,7 @@ export default defineApi( async ( event ) => {
     return fail( 401, errorMessage )
   }
 
-  const matches = bcrypt.compareSync( password, user.password )
+  const matches = await bcrypt.compare( password, user.password )
 
   if ( !matches ) {
     return fail( 401, errorMessage )
