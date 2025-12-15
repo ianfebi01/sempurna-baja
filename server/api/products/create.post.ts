@@ -2,6 +2,7 @@ import { createError, readMultipartFormData } from "h3"
 import { Buffer } from "node:buffer"
 import * as z from "zod"
 import { defineApi, fail } from "~~/server/utils/api"
+import { uploadImageToCloudinary } from "~~/server/utils/cloudinary"
 
 export default defineApi( async ( event ) => {
   // constants
@@ -88,28 +89,12 @@ export default defineApi( async ( event ) => {
 
     const buf = Buffer.from( imagePart.data )
 
-    // 🔹 pakai native FormData dari Node 18+ (Nitro sudah support)
-    const formData = new FormData()
-    if ( imagePart.filename )
-      formData.append( "file", new Blob( [buf], { type: imagePart.type || "image/jpeg" } ), imagePart.filename )
-
-    // 🔹 panggil endpoint upload internal (via fetch absolute URL)
-    // Derive base URL from current request origin to avoid localhost on Vercel
-    const origin = getRequestURL( event ).origin
-    const { public: publicRuntime } = useRuntimeConfig()
-    const baseUrl = origin || publicRuntime.siteUrl || "http://localhost:3000"
-
-    const res = await $fetch( `${baseUrl}/api/upload`, {
-      method : "POST",
-      body   : formData,
-    } )
-
-    if ( !res.url ) {
-      console.error( res )
-      fail( 500, "Upload gagal ke Cloudinary" )
-    }
-
-    imageUrl = res.url
+    // Upload via util
+    imageUrl = await uploadImageToCloudinary( {
+      data     : buf,
+      type     : imagePart.type,
+      filename : imagePart.filename,
+    }, { folder: "sempurna-baja", maxBytes: MAX_FILE_SIZE } )
   }
 
   // save
