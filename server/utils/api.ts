@@ -4,6 +4,7 @@ import type { ZodError } from "zod"
 import type { ApiError, ApiMeta, ApiSuccess } from "~~/shared/types"
 
 export function baseMeta( event: H3Event ) {
+  // eslint-disable-next-line no-underscore-dangle
   const start = event.context.__start ?? performance.now()
   return {
     requestId  : event.context.requestId as string,
@@ -55,16 +56,12 @@ export function normalizeError( e: unknown ) {
   return { statusCode, code, message, details }
 }
 
-/**
- * Bungkus handler agar output konsisten { success, data/error, meta }
- */
 export function defineApi<T>(
   fn: ( event: H3Event ) => Promise<T> | T,
 ) {
   return defineEventHandler( async ( event ) => {
     try {
       const data = await fn( event )
-      // kalau handler memang ingin 204, boleh return null saja dan set status manual
       return {
         success : true,
         data,
@@ -82,15 +79,12 @@ export function defineApi<T>(
   } )
 }
 
-/** Helper lempar error dengan code/ details konsisten */
 export function fail(
   statusCode: number,
   message: string,
   code = "ERROR",
   details?: unknown,
 ) {
-  // createError tidak menerima object untuk statusMessage,
-  // jadi info extra ditaruh di .data agar bisa diambil normalizeError
   throw createError( {
     statusCode,
     statusMessage : message,

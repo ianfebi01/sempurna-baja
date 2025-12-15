@@ -67,7 +67,7 @@ export default defineApi( async ( event ) => {
   const parsed = textSchema.safeParse( data )
   if ( !parsed.success ) {
     const first = parsed.error.issues[0]
-    throw createError( { statusCode: 400, statusMessage: first.message } ) // Sudah Bahasa Indonesia
+    throw createError( { statusCode: 400, statusMessage: first.message } )
   }
 
   // slug: sanitize + uniqueness

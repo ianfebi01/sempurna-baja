@@ -242,7 +242,6 @@ onMounted( async () => {
       } )
     }
 
-    // Animate "Lihat Produk lainnya" grid
     if ( componentRef.value && itemsRef.value?.length ) {
       const tl = gsap.timeline( {
         scrollTrigger: {
