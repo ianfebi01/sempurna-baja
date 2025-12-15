@@ -22,11 +22,13 @@ export default defineApi( async ( event ) => {
     throw createError( { statusCode: 400, statusMessage: first.message } )
   }
 
+  if ( !mongoose.connection.db ) {
+    fail( 500, "Database connection not established" )
+  }
+
   const user = await mongoose.connection.db?.collection( "users" ).findOne( { email } )
 
   if ( !user ) {
-    console.log( "no user found: ", user )
-    console.log( "console mongo: ", await mongoose.connection.db?.collection( "users" ).find() )
     return fail( 401, errorMessage )
   }
 
