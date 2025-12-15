@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+// import mongoose from "mongoose"
 import bcrypt from "bcryptjs"
 import z from "zod"
 import { connectDB } from "~~/server/utils/mongoose"
@@ -23,11 +23,11 @@ export default defineApi( async ( event ) => {
     throw createError( { statusCode: 400, statusMessage: first.message } )
   }
 
-  if ( !mongoose.connection.db ) {
+  if ( !db ) {
     fail( 500, "Database connection not established" )
   }
 
-  const user = await mongoose.connection.db?.collection( "users" ).findOne( { email } )
+  const user = await db?.collection( "users" ).findOne( { email } )
 
   if ( !user ) {
     return fail( 401, errorMessage )
