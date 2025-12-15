@@ -6,7 +6,8 @@ import { connectDB } from "~~/server/utils/mongoose"
 const errorMessage = "Email atau password salah."
 
 export default defineApi( async ( event ) => {
-  await connectDB()
+  const conn = await connectDB() // returns mongoose.Connection
+  const db = conn.connection.db          
 
   const { email, password } = await readBody( event )
 
