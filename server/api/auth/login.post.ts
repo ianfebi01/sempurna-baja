@@ -1,10 +1,13 @@
 import mongoose from "mongoose"
 import bcrypt from "bcryptjs"
 import z from "zod"
+import { connectDB } from "~~/server/utils/mongoose"
 
 const errorMessage = "Email atau password salah."
 
 export default defineApi( async ( event ) => {
+  await connectDB()
+
   const { email, password } = await readBody( event )
 
   const schema = z.object( {
