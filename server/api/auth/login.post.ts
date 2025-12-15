@@ -25,6 +25,7 @@ export default defineApi( async ( event ) => {
   const user = await mongoose.connection.db?.collection( "users" ).findOne( { email } )
 
   if ( !user ) {
+    console.log( "no user found", user )
     return fail( 401, errorMessage )
   }
 
