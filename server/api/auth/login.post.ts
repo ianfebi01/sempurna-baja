@@ -11,7 +11,7 @@ export default defineApi( async ( event ) => {
   const { email, password } = await readBody( event )
 
   const schema = z.object( {
-    email    : z.email( "Email tidak valid" ),
+    email    : z.string().email( "Email tidak valid" ),
     password : z.string( "Password tidak boleh kosong" ).min( 8, "Password harus terdiri dari minimal 8 karakter" ),
 } )
 
@@ -36,6 +36,8 @@ export default defineApi( async ( event ) => {
     return fail( 401, errorMessage )
   }
 
+  // Clear any existing session/token before setting a new one
+  await clearAuth( event )
   await setAuth( event, user.email )
 
   return {

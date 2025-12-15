@@ -17,6 +17,6 @@ export async function createJWT( email: string ) {
 }
 
 export async function verifyJWT( token: string ) {
-  const options: JWTVerifyOptions = { clockTolerance: 5 }
+  const options: JWTVerifyOptions = { clockTolerance: 60 }
   return ( await jwtVerify( token, JWT_SECRET, options ) ).payload as AuthPayload
 }
