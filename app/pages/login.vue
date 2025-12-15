@@ -80,7 +80,6 @@ async function login( loginForm: Schema ) {
             } )
         }
     } catch ( err: unknown ) {
-        console.log( "error: ", ( err as { data: ApiError } )?.data )
         const error = err as { data: ApiError, status: number }
         if ( ( err as { data: ApiError, status: number } )?.status === 401 ) {
             toast.add( {

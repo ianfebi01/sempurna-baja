@@ -9,7 +9,6 @@ export async function getAuth( event: H3Event ) {
 
 export async function setAuth( event: H3Event, email: string ) {
   const token = await createJWT( email )
-  console.log( "token: ",token )
   // return setCookie(event, 'authorization', token)
   return await _useSession( event, token )
 }
