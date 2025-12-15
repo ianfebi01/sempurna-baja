@@ -59,6 +59,7 @@ async function login( loginForm: Schema ) {
         const data = await $fetch<ApiSuccess<Login> | ApiError>( "/api/auth/login", {
             method : "POST",
             body   : loginForm,
+            retry  : 0,
         } )
 
         if ( data.success ) {
