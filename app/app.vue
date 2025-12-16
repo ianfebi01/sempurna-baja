@@ -1,4 +1,5 @@
 <template>
+  <NuxtLoadingIndicator color="#F56131" />
   <div class="flex flex-col relative min-h-screen">
     <UApp>
 
