@@ -2,11 +2,12 @@ import { attachDatabasePool } from "@vercel/functions"
 import type { MongoClientOptions } from "mongodb"
 import { MongoClient } from "mongodb"
 
-const uri = process.env.MONGODB_URI
+const { uri, dbName, appName } = useRuntimeConfig().mongo
+
 const options: MongoClientOptions = {
-  appName: "sempurna-baja-dev",
+  appName: appName || "sempurna-baja-dev",
 }
-export const DB_NAME = "sempurna-baja-dev"
+export const DB_NAME = dbName || "sempurna-baja"
 
 let client: MongoClient
 // eslint-disable-next-line import/no-mutable-exports

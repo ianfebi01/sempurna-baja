@@ -35,6 +35,11 @@ export default defineNuxtConfig( {
         exclude : [],
       },
     },
+    mongo: {
+      uri     : process.env.MONGODB_URI,
+      dbName  : process.env.MONGODB_DB_NAME,
+      appName : process.env.MONGODB_DB_NAME,
+    },
   },
   modules: [
     "@nuxt/eslint",
