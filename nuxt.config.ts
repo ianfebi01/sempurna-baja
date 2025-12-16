@@ -65,9 +65,9 @@ export default defineNuxtConfig( {
   nitro: {
     preset    : process.env.VERCEL ? "vercel" : "static",
     prerender : {
-      routes: [
-        "/",
-      ],
+      // routes: [
+      //   "/",
+      // ],
       failOnError: true,
     },
   },
