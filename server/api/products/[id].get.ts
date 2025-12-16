@@ -1,26 +1,26 @@
+import clientPromise, { DB_NAME } from "~~/server/lib/mongodb"
 import { defineApi, fail } from "~~/server/utils/api"
+import { ObjectId } from "mongodb"
 
 export default defineApi( async ( event ) => {
-    // auth
-    const me = await requireAuth( event )
-    const email = me?.email
-    const user = await UserSchema.findOne( { email } )
-    if ( !user ) {
-        fail( 401, "Unauthorized", "UNAUTHORIZED" )
-    }
+  const me = await requireAuth( event )
+  const email = me?.email
+  if ( !email ) return fail( 401, "Unauthorized", "UNAUTHORIZED" )
 
-    // Get Id
-    const id = event.context.params?.id
-    if ( !id ) {
-        return fail( 400, "Produk tidak valid", "BAD_REQUEST" )
-    }
+  const id = event.context.params?.id
+  if ( !id || !ObjectId.isValid( id ) ) return fail( 400, "Produk tidak valid", "BAD_REQUEST" )
 
-    // get product
-    const product = await ProductSchema.findById( id ).populate( "brand" ).populate( "category" ).lean()
+  const client = await clientPromise
+  if ( !client ) return fail( 500, "Koneksi database gagal", "INTERNAL_SERVER_ERROR" )
+  const db = client.db( DB_NAME )
 
-    if ( !product ) {
-        return fail( 404, "Produk tidak ditemukan", "NOT_FOUND" )
-    }
+  const product = await db.collection( "products" ).findOne( { _id: new ObjectId( id ) } )
+  if ( !product ) return fail( 404, "Produk tidak ditemukan", "NOT_FOUND" )
 
-    return product
+  const [brand, category] = await Promise.all( [
+    db.collection( "brands" ).findOne( { _id: new ObjectId( String( product.brand ) ) } ),
+    db.collection( "categories" ).findOne( { _id: new ObjectId( String( product.category ) ) } ),
+  ] )
+
+  return { ...product, brand, category }
 } )

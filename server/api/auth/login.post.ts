@@ -5,10 +5,12 @@ import clientPromise, { DB_NAME } from "~~/server/lib/mongodb"
 const errorMessage = "Email atau password salah."
 
 export default defineApi( async ( event ) => {
+  // Connect DB
   const client = await clientPromise
+
   if ( !client ) {
     return fail( 500, "Koneksi database gagal" )
-}
+  }
   const db = client.db( DB_NAME )
 
   const { email, password } = await readBody( event )
@@ -16,7 +18,7 @@ export default defineApi( async ( event ) => {
   const schema = z.object( {
     email    : z.email( "Email tidak valid" ),
     password : z.string( "Password tidak boleh kosong" ).min( 8, "Password harus terdiri dari minimal 8 karakter" ),
-} )
+  } )
 
   const result = schema.safeParse( { email, password } )
 

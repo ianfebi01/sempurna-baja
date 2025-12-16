@@ -1,39 +1,12 @@
-import { defineMongooseModel } from "#nuxt/mongoose"
+import z from "zod"
 
-// import { hash } from 'bcrypt'
-
-export const UserSchema = defineMongooseModel( {
-  name   : "User",
-  schema : {
-    email: {
-      type   : "string",
-      unique : true,
-    },
-    password: {
-      type: "string",
-    },
-  },
-  hooks( schema ) {
-    schema.pre( "save", function handleUserSave ( this, next ) {
-      // TODO: better validation
-      if ( this.password && this.email )
-        next()
-
-      throw createError( {
-        statusCode    : 500,
-        statusMessage : "validation failed",
-      } )
-      // this.password = Math.random().toString() as any
-
-      // bcrypt.genSalt(10, function(err, salt) {
-      //     if (err) return next(err);
-
-      //     bcrypt.hash(user.password, salt, function(err, hash) {
-      //         if (err) return next(err);
-      //         user.password = hash;
-      //         next();
-      //     })
-      // })
-    } )
-  },
+// Zod schema for user validation
+export const UserZod = z.object( {
+  email    : z.string().email( "Email tidak valid" ),
+  password : z.string().min( 8, "Password harus terdiri dari minimal 8 karakter" ),
 } )
+
+export type UserInput = z.infer<typeof UserZod>
+
+// Mongo collection name helper
+export const USER_COLLECTION = "users"

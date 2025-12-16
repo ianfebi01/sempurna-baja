@@ -10,7 +10,7 @@ const JWT_SECRET = new TextEncoder().encode( mongo.secret )
 export async function createJWT( email: string ) {
   return await new SignJWT( { email } )
     .setProtectedHeader( { alg: "HS256" } )
-    .setIssuer( "mongoose-auth.nuxt.space" )
+    .setIssuer( "sempurna-baja.nuxt.space" )
     .setIssuedAt()
     .setExpirationTime( "2h" )
     .sign( JWT_SECRET )  

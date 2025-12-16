@@ -1,15 +1,15 @@
 import { createError, readMultipartFormData } from "h3"
 import { Buffer } from "node:buffer"
 import * as z from "zod"
+import clientPromise, { DB_NAME } from "~~/server/lib/mongodb"
 import { defineApi, fail } from "~~/server/utils/api"
 import { uploadImageToCloudinary } from "~~/server/utils/cloudinary"
+import { ObjectId } from "mongodb"
 
 export default defineApi( async ( event ) => {
-  // constants
   const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
   const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
 
-  // helpers
   const formatBytes = ( bytes: number, decimals = 2 ) => {
     if ( bytes === 0 ) return "0 Bytes"
     const k = 1024
@@ -19,13 +19,9 @@ export default defineApi( async ( event ) => {
     return parseFloat( ( bytes / Math.pow( k, i ) ).toFixed( dm ) ) + " " + sizes[i]
   }
 
-  // read form
   const form = await readMultipartFormData( event )
-  if ( !form ) {
-    return fail( 400, "Data form tidak valid.", "BAD_REQUEST" )
-  }
+  if ( !form ) return fail( 400, "Data form tidak valid.", "BAD_REQUEST" )
 
-  // split parts into text + file
   const data: Record<string, string> = {}
   let imagePart: { filename?: string | null; type?: string | null; data: Uint8Array } | null = null
 
@@ -34,23 +30,17 @@ export default defineApi( async ( event ) => {
     if ( part.name === "image" && part.filename && part.type ) {
       imagePart = { filename: part.filename, type: part.type, data: part.data || new Uint8Array() }
     } else {
-      // MultiPartData doesn't have `.value`. Decode bytes:
       data[part.name] = part.data ? Buffer.from( part.data ).toString( "utf8" ) : ""
     }
   }
 
-  // auth
   const me = await requireAuth( event )
   const email = me?.email
-  const user = await UserSchema.findOne( { email } )
-  if ( !user ) {
-    fail( 401, "Tidak diizinkan.", "UNAUTHORIZED" )
-  }
+  if ( !email ) return fail( 401, "Tidak diizinkan.", "UNAUTHORIZED" )
 
-  // zod (text fields only)
   const textSchema = z.object( {
     name        : z.string().min( 2, "Nama terlalu pendek" ),
-    slug        : z.string().min( 2, "Slug terlalu pendek" ).optional(), // we might auto-generate
+    slug        : z.string().min( 2, "Slug terlalu pendek" ).optional(),
     description : z.string().min( 10, "Deskripsi terlalu pendek" ),
     category    : z.string().min( 2, "Kategori terlalu pendek" ),
     price       : z.coerce.number().min( 1000, "Harga minimal adalah 1000" ),
@@ -64,54 +54,44 @@ export default defineApi( async ( event ) => {
     throw createError( { statusCode: 400, statusMessage: first.message } )
   }
 
-  // slug: sanitize + uniqueness
   const slug = ( parsed.data.slug || parsed.data.name )
     .toLowerCase()
     .replace( /[^a-z0-9]+/g, "-" )
     .replace( /^-+|-+$/g, "" )
 
-  const existing = await ProductSchema.findOne( { slug } )
-  if ( existing ) {
-    return fail( 409, `Slug "${slug}" sudah ada.` )
-  }
+  const client = await clientPromise
+  if ( !client ) return fail( 500, "Koneksi database gagal", "INTERNAL_SERVER_ERROR" )
+  const db = client.db( DB_NAME )
 
-  // file validations (server-side)
+  const existing = await db.collection( "products" ).findOne( { slug } )
+  if ( existing ) return fail( 409, `Slug "${slug}" sudah ada.` )
+
   let imageUrl: string | null = null
   if ( imagePart ) {
     const mime = imagePart.type || ""
     const size = imagePart.data.length
-    if ( !ACCEPTED_IMAGE_TYPES.includes( mime ) ) {
-      return fail( 400, "Format gambar tidak valid. Format yang diperbolehkan: JPEG, PNG, atau WebP." )
-    }
-    if ( size > MAX_FILE_SIZE ) {
-      return fail( 400, `Ukuran gambar terlalu besar. Maksimal ${formatBytes( MAX_FILE_SIZE )}.` )
-    }
+    if ( !ACCEPTED_IMAGE_TYPES.includes( mime ) ) return fail( 400, "Format gambar tidak valid. Format yang diperbolehkan: JPEG, PNG, atau WebP." )
+    if ( size > MAX_FILE_SIZE ) return fail( 400, `Ukuran gambar terlalu besar. Maksimal ${formatBytes( MAX_FILE_SIZE )}.` )
 
     const buf = Buffer.from( imagePart.data )
-
-    // Upload via util
-    imageUrl = await uploadImageToCloudinary( {
-      data     : buf,
-      type     : imagePart.type,
-      filename : imagePart.filename,
-    }, { folder: "sempurna-baja", maxBytes: MAX_FILE_SIZE } )
+    imageUrl = await uploadImageToCloudinary( { data: buf, type: imagePart.type, filename: imagePart.filename }, { folder: "sempurna-baja", maxBytes: MAX_FILE_SIZE } )
   }
 
-  // save
-  const product = await new ProductSchema( {
+  const doc = {
     name        : parsed.data.name,
     slug,
     description : parsed.data.description,
-    category    : parsed.data.category,
+    category    : new ObjectId( parsed.data.category ),
     price       : parsed.data.price,
     unit        : parsed.data.unit,
-    brand       : parsed.data.brand,
-    image       : imageUrl, // URL from storage
-  } ).save()
-
-  // return product
-
-  return {
-    ...product,
+    brand       : new ObjectId( parsed.data.brand ),
+    image       : imageUrl,
+    createdAt   : new Date(),
+    updatedAt   : new Date(),
   }
+
+  const res = await db.collection( "products" ).insertOne( doc )
+  const product = await db.collection( "products" ).findOne( { _id: res.insertedId } )
+
+  return product
 } )

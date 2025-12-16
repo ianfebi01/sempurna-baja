@@ -1,33 +1,25 @@
 import { defineApi, fail } from "~~/server/utils/api"
-import { ProductSchema } from "~~/server/models/product.schema"
+import clientPromise, { DB_NAME } from "~~/server/lib/mongodb"
+import { ObjectId } from "mongodb"
 
 export default defineApi( async ( event ) => {
-  // Require auth
   const me = await requireAuth( event )
   const email = me?.email
-  if ( !email ) {
-    return fail( 401, "Unauthorized", "UNAUTHORIZED" )
-  }
+  if ( !email ) return fail( 401, "Unauthorized", "UNAUTHORIZED" )
 
-  // Get Id
   const id = event.context.params?.id
-  if ( !id ) {
-    return fail( 400, "Kategori tidak valid", "BAD_REQUEST" )
-  }
+  if ( !id || !ObjectId.isValid( id ) ) return fail( 400, "Kategori tidak valid", "BAD_REQUEST" )
 
-  // Check if any product uses this brand
-  const usedByProduct = await ProductSchema.exists( { brand: id } )
-  if ( usedByProduct ) {
-    return fail( 400, "Brand sedang digunakan oleh produk lain", "BRAND_IN_USE" )
-  }
+  const client = await clientPromise
+  if ( !client ) return fail( 500, "Koneksi database gagal", "INTERNAL_SERVER_ERROR" )
+  const db = client.db( DB_NAME )
 
-  // Delete
-  const brand = await BrandSchema.findByIdAndDelete( id )
-  if ( !brand ) {
-    return fail( 404, "Brand tidak ditemukan", "NOT_FOUND" )
-  }
+  const usedByProduct = await db.collection( "products" ).findOne( { brand: new ObjectId( id ) } )
+  if ( usedByProduct ) return fail( 400, "Brand sedang digunakan oleh produk lain", "BRAND_IN_USE" )
 
-  return {
-    ...brand,
-  }
+  const deleted = await db.collection( "brands" ).findOneAndDelete( { _id: new ObjectId( id ) } )
+  const deletedDoc = deleted?.value
+  if ( !deletedDoc ) return fail( 404, "Brand tidak ditemukan", "NOT_FOUND" )
+
+  return deletedDoc
 } )

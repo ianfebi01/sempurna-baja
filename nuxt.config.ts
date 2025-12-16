@@ -45,7 +45,6 @@ export default defineNuxtConfig( {
     "@nuxt/icon",
     "@nuxt/image",
     "@nuxt/ui",
-    "nuxt-mongoose",
   ],
   eslint: {
     checker: true,
@@ -58,13 +57,6 @@ export default defineNuxtConfig( {
   site: {
     url       : resolveSiteUrl(),
     indexable : process.env.NODE_ENV === "production",
-  },
-  mongoose: {
-    options: {
-      appName : "sempurna-baja",
-      dbName  : "sempurna-baja-dev",
-    },
-    devtools: true,
   },
   nitro: {
     preset    : process.env.VERCEL ? "vercel" : "static",

@@ -1,61 +1,15 @@
-import { defineMongooseModel } from "#nuxt/mongoose"
+import z from "zod"
 
-export const ProductSchema = defineMongooseModel<Product>( {
-  name   : "Product",
-  schema : {
-    image: {
-      type     : "string",
-      required : true,
-    },
-    name: {
-      type     : "string",
-      required : true,
-      trim     : true,
-      index    : true, // simple field index
-    },
-    slug: {
-      type      : "string",
-      required  : true,
-      unique    : true,
-      lowercase : true,
-      trim      : true,
-      index     : true,
-    },
-    description: {
-      type: "string",
-    },
-    category: {
-      type     : "ObjectId",
-      ref      : "Category",
-      required : true,
-      index    : true,
-    },
-    price: {
-      type     : "number",
-      required : true,
-      min      : 0,
-      index    : true,
-    },
-    unit: {
-      type    : "string",
-      default : "pcs",
-    },
-    brand: {
-      type     : "ObjectId",
-      ref      : "Brand",
-      required : true,
-      index    : true,
-    },
-  },
-  options: {
-    timestamps: true,
-  },
-  hooks( schema ) {
-    // 🧩 compound indexes defined here
-    schema.index( { category: 1, brand: 1 } )
-    schema.index( { name: 1, price: 1 } )
-
-    // Optional: text search index
-    schema.index( { name: "text", description: "text" } )
-  },
+export const ProductZod = z.object( {
+  image       : z.string().min( 1 ),
+  name        : z.string().min( 1 ).trim(),
+  slug        : z.string().min( 1 ).trim().toLowerCase(),
+  description : z.string().optional(),
+  category    : z.string().min( 1 ), // store ObjectId as string input, convert to ObjectId when inserting
+  price       : z.number().min( 0 ),
+  unit        : z.string().default( "pcs" ),
+  brand       : z.string().min( 1 ), // store ObjectId as string input, convert to ObjectId when inserting
 } )
+
+export type ProductInput = z.infer<typeof ProductZod>
+export const PRODUCT_COLLECTION = "products"

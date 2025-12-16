@@ -1,6 +1,6 @@
 import type { AuthPayload } from "#shared/types"
 
-const useUserSessionState = () => useState<AuthPayload>( "nuxt-mongoose-auth", () => ( {} ) )
+const useUserSessionState = () => useState<AuthPayload>( "sempurna-baja-auth", () => ( {} ) )
 
 export function useAuth() {
   const sessionState = useUserSessionState()

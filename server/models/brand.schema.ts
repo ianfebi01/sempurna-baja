@@ -1,29 +1,9 @@
-import { defineMongooseModel } from "#nuxt/mongoose"
+import z from "zod"
 
-export const BrandSchema = defineMongooseModel( {
-  name   : "Brand",
-  schema : {
-    name: {
-      type     : "string",
-      required : true,
-      unique   : true,
-      trim     : true,
-      index    : true,
-    },
-    slug: {
-      type      : "string",
-      required  : true,
-      unique    : true,
-      lowercase : true,
-      trim      : true,
-      index     : true,
-    },
-  },
-  options: {
-    timestamps: true,
-  },
-  hooks( schema ) {
-    // Optional: text search index
-    schema.index( { name: "text", slug: "text" } )
-  },
+export const BrandZod = z.object( {
+  name : z.string().min( 1 ).trim(),
+  slug : z.string().min( 1 ).trim().toLowerCase(),
 } )
+
+export type BrandInput = z.infer<typeof BrandZod>
+export const BRAND_COLLECTION = "brands"
