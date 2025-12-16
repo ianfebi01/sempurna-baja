@@ -1,7 +1,7 @@
 import { getProductRoutes } from "./server/prerender/products"
 
 // Helper to resolve site URL for production/preview/dev
-function resolveSiteUrl () {
+function resolveSiteUrl() {
   const env = process.env.VERCEL_ENV
   const custom = process.env.NUXT_SITE_URL
   const previewHost = process.env.VERCEL_URL
@@ -70,15 +70,13 @@ export default defineNuxtConfig( {
   hooks: {
     "nitro:config": async ( nitroConfig ) => {
       if ( nitroConfig.dev ) return
-      try {
-        const productRoutes = await getProductRoutes()
 
-        productRoutes.forEach( ( path ) => nitroConfig?.prerender?.routes?.push( `${path}` ) )
+      const productRoutes = await getProductRoutes()
 
-        console.info( `[prerender] Added ${productRoutes.length} product routes.` )
-      } catch ( err ) {
-        console.warn( "[prerender] Failed adding product routes:", err )
-      }
+      productRoutes.forEach( ( path ) => nitroConfig?.prerender?.routes?.push( `${path}` ) )
+
+      console.info( `[prerender] Added ${productRoutes.length} product routes.` )
+
     },
   },
   router: {
