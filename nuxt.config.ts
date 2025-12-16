@@ -1,7 +1,7 @@
 import products from "./app/assets/json/products.json"
 
 // Helper to resolve site URL for production/preview/dev
-function resolveSiteUrl() {
+function resolveSiteUrl () {
   const env = process.env.VERCEL_ENV
   const custom = process.env.NUXT_SITE_URL
   const previewHost = process.env.VERCEL_URL
@@ -68,11 +68,12 @@ export default defineNuxtConfig( {
     },
   },
   hooks: {
-    "prerender:routes" ( ctx ) {
-      const productRoutes = products.map( ( p ) => `/products/${p.slug}` )
-      for ( const path of productRoutes ) {
-        ctx.routes.add( `${path}` )
+    "nitro:config": async ( nitroConfig ) => {
+      if ( nitroConfig.dev ) {
+        return
       }
+
+      products.forEach( ( item ) => nitroConfig?.prerender?.routes?.push( `/products/${item.slug}` ) )
     },
   },
   router: {
