@@ -1,5 +1,3 @@
-import products from "./app/assets/json/products.json"
-
 // Helper to resolve site URL for production/preview/dev
 function resolveSiteUrl () {
   const env = process.env.VERCEL_ENV
@@ -67,15 +65,23 @@ export default defineNuxtConfig( {
       failOnError: true,
     },
   },
-  // hooks: {
-  //   "nitro:config": async ( nitroConfig ) => {
-  //     if ( nitroConfig.dev ) {
-  //       return
-  //     }
+  hooks: {
+    "nitro:config": async ( nitroConfig ) => {
+      if ( nitroConfig.dev ) return
+      try {
+        const { getProductRoutes } = await import( "./server/prerender/products" )
+        const productRoutes = await getProductRoutes()
 
-  //     products.forEach( ( item ) => nitroConfig?.prerender?.routes?.push( `/products/${item.slug}` ) )
-  //   },
-  // },
+        nitroConfig.prerender = nitroConfig.prerender || { routes: [] }
+        nitroConfig.prerender.routes = nitroConfig.prerender.routes || []
+        for ( const r of productRoutes ) nitroConfig.prerender.routes.push( r )
+
+        console.info( `[prerender] Added ${productRoutes.length} product routes.` )
+      } catch ( err ) {
+        console.warn( "[prerender] Failed adding product routes:", err )
+      }
+    },
+  },
   router: {
     options: {
       scrollBehaviorType: "smooth",
