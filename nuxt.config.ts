@@ -73,9 +73,7 @@ export default defineNuxtConfig( {
       try {
         const productRoutes = await getProductRoutes()
 
-        nitroConfig.prerender = nitroConfig.prerender || { routes: [] }
-        nitroConfig.prerender.routes = nitroConfig.prerender.routes || []
-        for ( const r of productRoutes ) nitroConfig.prerender.routes.push( r )
+        productRoutes.forEach( ( path ) => nitroConfig?.prerender?.routes?.push( `${path}` ) )
 
         console.info( `[prerender] Added ${productRoutes.length} product routes.` )
       } catch ( err ) {
