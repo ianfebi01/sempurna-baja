@@ -61,7 +61,8 @@ export default defineNuxtConfig( {
   },
   mongoose: {
     options: {
-      appName: "sempurna-baja-dev",
+      appName : "sempurna-baja",
+      dbName  : "sempurna-baja-dev",
     },
     devtools: true,
   },
