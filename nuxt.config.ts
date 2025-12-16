@@ -59,6 +59,13 @@ export default defineNuxtConfig( {
     url       : resolveSiteUrl(),
     indexable : process.env.NODE_ENV === "production",
   },
+  mongoose: {
+    uri     : "process.env.MONGODB_URI",
+    options : {
+      appName: "sempurna-baja-dev",
+    },
+    devtools: true,
+  },
   nitro: {
     preset    : process.env.VERCEL ? "vercel" : "static",
     prerender : {
