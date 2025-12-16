@@ -8,7 +8,8 @@ export default defineEventHandler( async ( event ) => {
   const hashed = bcrypt.hashSync( password, 10 )
 
   try {
-    await mongoose.connection.db?.collection( "users" ).insertOne( { email, password: hashed, ...rest } )
+    const res = await mongoose.connection.db?.collection( "users" ).insertOne( { email, password: hashed, ...rest } )
+    console.log( res )
   } catch ( error ) {
     console.log( error )
     throw createError( {
