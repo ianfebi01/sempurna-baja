@@ -1,5 +1,3 @@
-import products from "./app/assets/json/products.json"
-
 // Helper to resolve site URL for production/preview/dev
 function resolveSiteUrl () {
   const env = process.env.VERCEL_ENV
@@ -67,15 +65,15 @@ export default defineNuxtConfig( {
       failOnError: true,
     },
   },
-  hooks: {
-    "nitro:config": async ( nitroConfig ) => {
-      if ( nitroConfig.dev ) {
-        return
-      }
+  // hooks: {
+  //   "nitro:config": async ( nitroConfig ) => {
+  //     if ( nitroConfig.dev ) {
+  //       return
+  //     }
 
-      products.forEach( ( item ) => nitroConfig?.prerender?.routes?.push( `/products/${item.slug}` ) )
-    },
-  },
+  //     products.forEach( ( item ) => nitroConfig?.prerender?.routes?.push( `/products/${item.slug}` ) )
+  //   },
+  // },
   router: {
     options: {
       scrollBehaviorType: "smooth",
