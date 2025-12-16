@@ -1,4 +1,4 @@
-import { getProductRoutes } from "./server/prerender/products"
+import products from "./app/assets/json/products.json"
 
 // Helper to resolve site URL for production/preview/dev
 function resolveSiteUrl() {
@@ -68,8 +68,8 @@ export default defineNuxtConfig( {
     },
   },
   hooks: {
-    async "prerender:routes" ( ctx ) {
-      const productRoutes = await getProductRoutes()
+    "prerender:routes" ( ctx ) {
+      const productRoutes = products.map( ( p ) => `/products/${p.slug}` )
       for ( const path of productRoutes ) {
         ctx.routes.add( `${path}` )
       }
