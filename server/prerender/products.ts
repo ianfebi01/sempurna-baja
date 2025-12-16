@@ -5,6 +5,7 @@ import clientPromise, { DB_NAME } from "../lib/mongodb"
  */
 export async function getProductRoutes (): Promise<string[]> {
   try {
+    console.log( "Fetching product routes..." )
     const client = await clientPromise
     if ( !client ) return []
 

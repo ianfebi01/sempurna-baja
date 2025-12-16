@@ -1,3 +1,5 @@
+import { getProductRoutes } from "./server/prerender/products"
+
 // Helper to resolve site URL for production/preview/dev
 function resolveSiteUrl () {
   const env = process.env.VERCEL_ENV
@@ -65,23 +67,22 @@ export default defineNuxtConfig( {
       failOnError: true,
     },
   },
-  // hooks: {
-  //   "nitro:config": async ( nitroConfig ) => {
-  //     if ( nitroConfig.dev ) return
-  //     try {
-  //       const { getProductRoutes } = await import( "./server/prerender/products" )
-  //       const productRoutes = await getProductRoutes()
+  hooks: {
+    "nitro:config": async ( nitroConfig ) => {
+      if ( nitroConfig.dev ) return
+      try {
+        const productRoutes = await getProductRoutes()
 
-  //       nitroConfig.prerender = nitroConfig.prerender || { routes: [] }
-  //       nitroConfig.prerender.routes = nitroConfig.prerender.routes || []
-  //       for ( const r of productRoutes ) nitroConfig.prerender.routes.push( r )
+        nitroConfig.prerender = nitroConfig.prerender || { routes: [] }
+        nitroConfig.prerender.routes = nitroConfig.prerender.routes || []
+        for ( const r of productRoutes ) nitroConfig.prerender.routes.push( r )
 
-  //       console.info( `[prerender] Added ${productRoutes.length} product routes.` )
-  //     } catch ( err ) {
-  //       console.warn( "[prerender] Failed adding product routes:", err )
-  //     }
-  //   },
-  // },
+        console.info( `[prerender] Added ${productRoutes.length} product routes.` )
+      } catch ( err ) {
+        console.warn( "[prerender] Failed adding product routes:", err )
+      }
+    },
+  },
   router: {
     options: {
       scrollBehaviorType: "smooth",
