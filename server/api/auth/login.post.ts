@@ -1,10 +1,15 @@
-import mongoose from "mongoose"
 import bcrypt from "bcryptjs"
 import z from "zod"
+import clientPromise, { DB_NAME } from "~~/server/lib/mongodb"
 
 const errorMessage = "Email atau password salah."
 
 export default defineApi( async ( event ) => {
+  const client = await clientPromise
+  if ( !client ) {
+    return fail( 500, "Koneksi database gagal" )
+}
+  const db = client.db( DB_NAME )
 
   const { email, password } = await readBody( event )
 
@@ -20,7 +25,7 @@ export default defineApi( async ( event ) => {
     throw createError( { statusCode: 400, statusMessage: first.message } )
   }
 
-  const user = await mongoose.connection.db.collection( "users" ).findOne( { email } )
+  const user = await db.collection( "users" ).findOne( { email } )
 
   if ( !user ) {
     return fail( 401, "Pengguna tidak ditemukan" )
