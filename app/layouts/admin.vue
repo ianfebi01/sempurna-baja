@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import "~/assets/css/admin.css"
 import type { NavigationMenuItem } from "@nuxt/ui"
 import { useAuth } from "~/compossables/useAuth"
 

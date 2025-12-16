@@ -1,5 +1,6 @@
 @import './fonts.css';
 @import 'tailwindcss';
+@import "@nuxt/ui";
 
 @theme {
   /* ── Container padding ───────────────────────────── */

@@ -24,6 +24,7 @@ export default defineNuxtConfig( {
   compatibilityDate : "2025-07-15",
   devtools          : { enabled: true },
   ssr               : true,
+  css               : ["./app/assets/css/main.css"],
   runtimeConfig     : {
     public: {
       siteName : process.env.NUXT_SITE_NAME,
