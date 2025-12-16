@@ -74,15 +74,15 @@ export default defineNuxtConfig( {
       failOnError: true,
     },
   },
-  hooks: {
-    "nitro:config": async ( nitroConfig ) => {
-      if ( nitroConfig.dev ) {
-        return
-      }
+  // hooks: {
+  //   "nitro:config": async ( nitroConfig ) => {
+  //     if ( nitroConfig.dev ) {
+  //       return
+  //     }
 
-      products.forEach( ( item ) => nitroConfig?.prerender?.routes?.push( `/products/${item.slug}` ) )
-    },
-  },
+  //     products.forEach( ( item ) => nitroConfig?.prerender?.routes?.push( `/products/${item.slug}` ) )
+  //   },
+  // },
   router: {
     options: {
       scrollBehaviorType: "smooth",
