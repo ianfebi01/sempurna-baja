@@ -60,8 +60,7 @@ export default defineNuxtConfig( {
     indexable : process.env.NODE_ENV === "production",
   },
   mongoose: {
-    uri     : "process.env.MONGODB_URI",
-    options : {
+    options: {
       appName: "sempurna-baja-dev",
     },
     devtools: true,
