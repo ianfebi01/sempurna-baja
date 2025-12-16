@@ -20,7 +20,7 @@ export default defineApi( async ( event ) => {
     throw createError( { statusCode: 400, statusMessage: first.message } )
   }
 
-  const user = await mongoose.connection.db?.collection( "users" ).findOne( { email } )
+  const user = await mongoose.connection.db.collection( "users" ).findOne( { email } )
 
   if ( !user ) {
     return fail( 401, "Pengguna tidak ditemukan" )
