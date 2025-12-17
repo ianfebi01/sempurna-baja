@@ -81,7 +81,7 @@ const profileDropdownItems = [
         </template>
 
         <template #default="{ collapsed }">
-          <UButton
+          <!-- <UButton
             :label="collapsed ? undefined : 'Search...'"
             icon="i-lucide-search"
             color="primary"
@@ -94,7 +94,7 @@ const profileDropdownItems = [
                 <UKbd value="K" variant="subtle" />
               </div>
             </template>
-          </UButton>
+          </UButton> -->
 
           <UNavigationMenu :collapsed="collapsed" :items="items[0]" orientation="vertical" />
         </template>
