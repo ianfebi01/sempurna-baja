@@ -1,7 +1,10 @@
 import type { JWTPayload } from "jose"
 
+export type Role = "admin" | "super-admin"
+
 export interface AuthPayload extends JWTPayload {
   email?: string
+  role?: Role
 }
 
 export interface ApiMeta {
@@ -32,5 +35,6 @@ type ApiError = {
 
 export interface Login {
   loggedIn: boolean,
-  user: string
+  user: string,
+  role?: Role,
 }
