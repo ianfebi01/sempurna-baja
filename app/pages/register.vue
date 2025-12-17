@@ -16,6 +16,7 @@
 import * as z from "zod"
 import type { FormSubmitEvent, AuthFormField } from "@nuxt/ui"
 import { useAuth } from "~/compossables/useAuth"
+import type { ApiError } from "~~/shared/types"
 
 definePageMeta( {
     layout     : "auth",
@@ -67,8 +68,21 @@ async function register( registerForm: Schema ) {
                 description : `${data.user} berhasil dibuat dan masuk.`,
             } )
         }
-    } catch ( error: unknown ) {
-        emit( "onError", error )
+    } catch ( err: unknown ) {
+        const error = err as { data: ApiError, status: number }
+        if ( error.status === 403 ) {
+            toast.add( {
+                title       : "Gagal Membuat Akun",
+                description : error?.data.error?.message ?? "Email tidak diizinkan untuk mendaftar.",
+                color       : "error",
+            } )
+        } else {
+            toast.add( {
+                title       : "Error",
+                description : error?.data.error?.message ?? "Terjadi kesalahan pada server.",
+                color       : "error",
+            } )
+        }
     }
 }
 </script>

@@ -7,15 +7,25 @@ const router = useRouter()
 const open = ref( false )
 const { loggedIn, user, clear } = useAuth()
 
-const items: NavigationMenuItem[][] = [
-  [
+const items = computed<NavigationMenuItem[][]>( () => {
+  const group: NavigationMenuItem[] = [
     {
       label : "Produk",
       icon  : "fa7-solid:bag-shopping",
       href  : "/admin",
     },
-  ],
-]
+  ]
+
+  if ( user.value?.role === "super-admin" ) {
+    group.push( {
+      label : "Kelola Pengguna",
+      icon  : "fa7-solid:users-cog",
+      href  : "/admin/users",
+    } )
+  }
+
+  return [ group ]
+} )
 
 const profileDropdownItems = [
   [

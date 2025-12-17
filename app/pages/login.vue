@@ -90,7 +90,7 @@ async function login( loginForm: Schema ) {
         } else {
             toast.add( {
                 title       : "Error",
-                description : "Terjadi kesalahan pada server.",
+                description : error?.data.error?.message ?? "Terjadi kesalahan pada server.",
                 color       : "error",
             } )
         }
