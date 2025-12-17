@@ -35,13 +35,13 @@ const profileDropdownItems = [
       disabled : true,
     },
   ],
-  [
-    {
-      label : "Profil Saya",
-      icon  : "i-ph-user-duotone",
-      click : () => router.replace( { name: "profile" } ),
-    },
-  ],
+  // [
+  //   {
+  //     label : "Profil Saya",
+  //     icon  : "i-ph-user-duotone",
+  //     click : () => router.replace( { name: "profile" } ),
+  //   },
+  // ],
   [
     {
       label    : "Keluar",
