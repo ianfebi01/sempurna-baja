@@ -136,6 +136,10 @@ const search = ref( "" )
 
 const searchDebounce = useDebounce( search, 500 )
 
+watch( searchDebounce, () => {
+  pagination.value.pageIndex = 0
+} )
+
 const pagination = ref( {
   pageIndex : 0,
   pageSize  : 9,
@@ -196,6 +200,7 @@ const toggleCategory = ( cat: string ) => {
     if ( i > -1 ) filters.category.splice( i, 1 )
     else filters.category.push( cat )
   }
+  pagination.value.pageIndex = 0
 }
 
 const toggleBrand = ( brand: string ) => {
@@ -206,6 +211,7 @@ const toggleBrand = ( brand: string ) => {
     if ( i > -1 ) filters.brand.splice( i, 1 )
     else filters.brand.push( brand )
   }
+  pagination.value.pageIndex = 0
 }
 
 // ✅ Reactive-safe internal reset
@@ -213,6 +219,7 @@ const resetFilter = () => {
   filters.brand.splice( 0 )
   filters.category.splice( 0 )
   search.value = ""
+  pagination.value.pageIndex = 0
 }
 
 const selectedCategoryLabel = computed( () =>
