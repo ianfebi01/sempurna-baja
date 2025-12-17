@@ -62,18 +62,40 @@
       <!-- Add allowlist modal -->
       <UModal v-model:open="showAddModal" title="Tambah Email ke Allowlist" :ui="{ footer: 'justify-end' }">
         <template #body>
-          <div class="space-y-3">
-            <UInput v-model="newEmail" label="Email" placeholder="nama@email.com" />
-            <USelect v-model="newRole" :items="roleItems" placeholder="Pilih peran" />
-          </div>
-        </template>
-        <template #footer>
-          <UButton variant="ghost" @click="onCloseAdd">Batal</UButton>
-          <UButton
-            color="primary"
-            :loading="adding"
-            :disabled="!canSubmit"
-            @click="onAdd">Simpan</UButton>
+          <UForm
+            :schema="schema"
+            class="space-y-4"
+            :state="addingState"
+            @submit="onAdd">
+
+            <UFormField name="email">
+              <UInput
+                v-model="addingState.email"
+                label="Email"
+                placeholder="nama@email.com"
+                class="w-full" />
+            </UFormField>
+            <UFormField name="role">
+              <USelect
+                v-model="addingState.role"
+                :items="roleItems"
+                placeholder="Pilih peran"
+                class="w-full" />
+            </UFormField>
+
+            <USeparator />
+            <div class="flex justify-end gap-2 mt-4">
+              <UButton variant="ghost" @click="onCloseAdd">Batal</UButton>
+              <UButton
+                color="neutral"
+                type="submit"
+                :loading="adding"
+                :disabled="!canSubmit">Simpan
+              </UButton>
+            </div>
+
+          </UForm>
+
         </template>
       </UModal>
 
@@ -98,6 +120,8 @@ import type { TableColumn } from "@nuxt/ui"
 import type { Role } from "#shared/types"
 import type { ApiSuccess } from "~~/shared/types"
 import { useAuth } from "~/compossables/useAuth"
+import z from "zod"
+import { RoleEnum } from "~~/server/models/allowlist.schema"
 
 definePageMeta( {
     layout     : "admin",
@@ -162,8 +186,6 @@ const columns: TableColumn<AllowItem>[] = [
 
 // Add allowlist state
 const showAddModal = ref( false )
-const newEmail = ref( "" )
-const newRole = ref<Role>( "admin" )
 const adding = ref( false )
 
 const roleItems = [
@@ -171,19 +193,29 @@ const roleItems = [
     { label: "Super Admin", value: "super-admin" },
 ]
 
-const canSubmit = computed( () => !!newEmail.value && !!newRole.value )
+const schema = z.object( {
+    email : z.email( "Invalid email" ),
+    role  : RoleEnum.default( "admin" ),
+} )
+
+const addingState = reactive<Partial<{ email: string; role: Role }>>( {
+    email : "",
+    role  : "admin",
+} )
+
+const canSubmit = computed( () => !!addingState.email && !!addingState.role )
 
 function onCloseAdd() {
     showAddModal.value = false
-    newEmail.value = ""
-    newRole.value = "admin"
+    addingState.email = ""
+    addingState.role = "admin"
 }
 
 async function onAdd() {
     if ( !isSuperAdmin.value ) return
     adding.value = true
     try {
-        const payload = { email: newEmail.value, role: newRole.value }
+        const payload = { email: addingState.email, role: addingState.role }
         await $fetch( "/api/allowlist/create", { method: "POST", body: payload } )
         toast.add( { title: "Sukses", description: "Email ditambahkan ke allowlist", color: "success" } )
         onCloseAdd()
