@@ -3,7 +3,7 @@ import { ALLOWLIST_COLLECTION, RoleEnum } from "~~/server/models/allowlist.schem
 import z from "zod"
 
 export default defineApi( async ( event ) => {
-  await requireRole( event, "super-admin" )
+  const me = await requireRole( event, "super-admin" )
 
   const client = await clientPromise
   if ( !client ) return fail( 500, "Koneksi database gagal", "INTERNAL_SERVER_ERROR" )
@@ -16,6 +16,11 @@ export default defineApi( async ( event ) => {
   } )
   const { email, role } = schema.parse( body )
   const emailNorm = email.trim().toLowerCase()
+
+  // Prevent super-admin from adding/updating their own allowlist entry
+  if ( me?.email && me.email.toLowerCase() === emailNorm ) {
+    return fail( 403, "Tidak boleh mengubah atau menambah email sendiri", "FORBIDDEN" )
+  }
 
   await db.collection( ALLOWLIST_COLLECTION ).updateOne(
     { email: emailNorm },
