@@ -15,13 +15,13 @@
           class="border border-gray-300 rounded-lg px-4 py-2 w-full sm:w-64 h-10 focus:ring-1 focus:ring-black focus:outline-none transition-colors duration-300 ease-in-out hover:bg-gray-50" />
 
         <!-- Category Filter -->
-        <Popover as="div" class="relative inline-block text-left w-full sm:w-64">
-          <PopoverButton
+        <Menu as="div" class="relative inline-block text-left w-full sm:w-64">
+          <MenuButton
             class="inline-flex w-full justify-between items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 text-left h-10 focus:ring-1 focus:ring-black focus:outline-none transition-colors duration-300 ease-in-out">
             <span class="line-clamp-1">{{ selectedCategoryLabel }}</span>
             <Icon v-if="!categoriesPending" name="fa7-solid:chevron-down" class="size-4" />
             <Icon v-if="categoriesPending" name="fa7-solid:circle-notch" class="size-4 animate-spin" />
-          </PopoverButton>
+          </MenuButton>
           <transition
             enter-active-class="transition duration-100 ease-out"
             enter-from-class="transform scale-95 opacity-0"
@@ -29,32 +29,32 @@
             leave-active-class="transition duration-75 ease-in"
             leave-from-class="transform scale-100 opacity-100"
             leave-to-class="transform scale-95 opacity-0">
-            <PopoverPanel
+            <MenuItems
               class="absolute left-0 mt-2 w-full origin-top-left bg-white border border-gray-300 rounded-lg shadow-lg z-10">
               <div class="max-h-[40vh] overflow-y-auto divide-y divide-gray-100">
-                <button
-                  v-for="(cat, i) in categories"
-                  :key="i"
-                  type="button"
-                  class="w-full text-left px-4 py-3 text-sm hover:font-bold flex justify-between items-center transition-default"
-                  :class="{ 'font-bold': filters.category.includes(cat.value) }"
-                  @click.stop="toggleCategory(cat.value)">
-                  <span>{{ cat.label }}</span>
-                  <Icon v-if="filters.category.includes(cat.value)" name="fa7-solid:check" class="size-4" />
-                </button>
+                <MenuItem v-for="(cat, i) in categories" :key="i" v-slot="{ active }">
+                  <button
+                    type="button"
+                    class="w-full text-left px-4 py-3 text-sm hover:font-bold flex justify-between items-center transition-default"
+                    :class="{ 'font-bold': filters.category.includes(cat.value), 'bg-gray-50': active }"
+                    @click="toggleCategory(cat.value)">
+                    <span>{{ cat.label }}</span>
+                    <Icon v-if="filters.category.includes(cat.value)" name="fa7-solid:check" class="size-4" />
+                  </button>
+                </MenuItem>
               </div>
-            </PopoverPanel>
+            </MenuItems>
           </transition>
-        </Popover>
+        </Menu>
 
         <!-- Brand Filter -->
-        <Popover as="div" class="relative inline-block text-left w-full sm:w-64">
-          <PopoverButton
+        <Menu as="div" class="relative inline-block text-left w-full sm:w-64">
+          <MenuButton
             class="inline-flex w-full justify-between items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-left font-medium hover:bg-gray-50 h-10 focus:ring-1 focus:ring-black focus:outline-none transition-colors duration-300 ease-in-out">
             <span class="line-clamp-1">{{ selectedBrandLabel }}</span>
             <Icon v-if="!brandsPending" name="fa7-solid:chevron-down" class="size-4" />
             <Icon v-if="brandsPending" name="fa7-solid:circle-notch" class="size-4 animate-spin" />
-          </PopoverButton>
+          </MenuButton>
           <transition
             enter-active-class="transition duration-100 ease-out"
             enter-from-class="transform scale-95 opacity-0"
@@ -62,23 +62,23 @@
             leave-active-class="transition duration-75 ease-in"
             leave-from-class="transform scale-100 opacity-100"
             leave-to-class="transform scale-95 opacity-0">
-            <PopoverPanel
+            <MenuItems
               class="absolute left-0 mt-2 w-full origin-top-left bg-white border border-gray-300 rounded-lg shadow-lg z-10">
               <div class="max-h-[40vh] overflow-y-auto divide-y divide-gray-100">
-                <button
-                  v-for="(brand, i) in brands"
-                  :key="i"
-                  type="button"
-                  class="w-full text-left px-4 py-3 text-sm hover:font-bold flex justify-between items-center transition-default"
-                  :class="{ 'font-bold': filters.brand.includes(brand.value) }"
-                  @click.stop="toggleBrand(brand.value)">
-                  <span>{{ brand.label }}</span>
-                  <Icon v-if="filters.brand.includes(brand.value)" name="fa7-solid:check" class="size-4" />
-                </button>
+                <MenuItem v-for="(brand, i) in brands" :key="i" v-slot="{ active }">
+                  <button
+                    type="button"
+                    class="w-full text-left px-4 py-3 text-sm hover:font-bold flex justify-between items-center transition-default"
+                    :class="{ 'font-bold': filters.brand.includes(brand.value), 'bg-gray-50': active }"
+                    @click="toggleBrand(brand.value)">
+                    <span>{{ brand.label }}</span>
+                    <Icon v-if="filters.brand.includes(brand.value)" name="fa7-solid:check" class="size-4" />
+                  </button>
+                </MenuItem>
               </div>
-            </PopoverPanel>
+            </MenuItems>
           </transition>
-        </Popover>
+        </Menu>
 
         <button class="button button-primary h-10" @click="resetFilter">Reset Filter</button>
       </div>
@@ -120,7 +120,7 @@
 
 <script lang="ts" setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue"
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue"
+import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue"
 import type { ApiSuccess } from "~~/shared/types"
 import type { ProductResponse } from "~~/shared/types/product"
 

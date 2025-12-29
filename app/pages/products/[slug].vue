@@ -31,7 +31,7 @@
           </div>
           <div class="sm:pl-8 sm:basis-[60%]">
             <h1 class="sm:mt-0">{{ product?.name }}</h1>
-            <p v-if="product.brand">Merk: <b>{{ product.brand }}</b></p>
+            <p v-if="product.brand">Merk: <b>{{ product.brand?.name }}</b></p>
             <p v-if="product.description">
               {{ product.description }}
             </p>
@@ -80,10 +80,11 @@
 </template>
 
 <script setup lang="ts">
-import products from "@/assets/json/products.json"
-toRaw( products )
+import type { ApiSuccess } from "~~/shared/types"
+import type { ProductResponse } from "~~/shared/types/product"
 
 const config = useRuntimeConfig().public
+const baseUrl = config.baseUrl
 const route = useRoute()
 const { $validateSlug } = useNuxtApp()
 
@@ -103,23 +104,30 @@ if ( !$validateSlug( `${route.params.slug}` ) ) {
   slug.value = `${route.params.slug}`
 }
 
-const product = computed( () =>
-  products.find( ( item ) => item.slug === route.params.slug ),
+const { data: productData, pending: _productPending } = await useAsyncData( `product-${slug.value}`,
+  () => $fetch<ApiSuccess<{ data: Product[] }>>( `${baseUrl}/api/products`, {
+    params: {
+      slug: slug.value,
+    },
+  } ),
 )
+
+
+const product = computed( () => productData.value?.data?.data[0] )
+
 if ( !product.value ) {
   console.error( "product not found", route.params.slug )
   throw create404( `${route.params.slug}` )
 }
 
-const uniqueCategoryProducts = computed( () => {
-  const map = new Map()
-  for ( const product of products.filter( ( item ) => item.slug !== route.params.slug ) ) {
-    if ( !map.has( product.category ) ) {
-      map.set( product.category, product )
-    }
-  }
-  return Array.from( map.values() ).slice( 0, 3 )
+const { data: uniqueCategoryData, pending: _uniqueCategoryPending } = await useFetch<ApiSuccess<ProductResponse>>( `${baseUrl}/api/products/unique-category`, {
+  key    : `unique-category-products-${slug.value}`,
+  params : {
+    slug: slug.value,
+  },
 } )
+
+const uniqueCategoryProducts = computed( () => uniqueCategoryData.value?.data?.data || [] )
 
 // WhatsApp link
 const whatsappLink = computed( () => {
@@ -145,7 +153,7 @@ const isOpenShare = ref<boolean>( false )
 // SEO
 const title = `${product.value?.name} - ${product.value?.brand} | Sempurna Baja`
 const sitename = config.siteName
-const desc = product.value.description
+const desc = product.value?.description
 useHead( {
   title : title || sitename || null,
   meta  : [
@@ -235,7 +243,6 @@ onMounted( async () => {
       } )
     }
 
-    // Animate "Lihat Produk lainnya" grid
     if ( componentRef.value && itemsRef.value?.length ) {
       const tl = gsap.timeline( {
         scrollTrigger: {
