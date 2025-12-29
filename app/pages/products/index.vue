@@ -121,6 +121,7 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue"
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue"
+import { useQuery } from "@tanstack/vue-query"
 import type { ApiSuccess } from "~~/shared/types"
 import type { ProductResponse } from "~~/shared/types/product"
 
@@ -144,23 +145,38 @@ const pagination = ref( {
   pageSize  : 9,
 } )
 
-const { data, pending } = await useFetch<ApiSuccess<ProductResponse>>( `${baseUrl}/api/products`, {
-  key    : `products-${searchDebounce.value}-${filters.category.join( "," )}-${filters.brand.join( "," )}`,
-  server : true,
-  params : {
-    page     : computed( () => pagination.value.pageIndex + 1 ),
-    pageSize : computed( () => pagination.value.pageSize ),
-    search   : computed( () => searchDebounce.value ),
-    category : computed( () => filters.category.join( "," ) ),
-    brand    : computed( () => filters.brand.join( "," ) ),
+// Products Query
+const { data: productsData, isPending: pending } = useQuery( {
+  queryKey: computed( () => [
+    "products",
+    {
+      page     : pagination.value.pageIndex + 1,
+      pageSize : pagination.value.pageSize,
+      search   : searchDebounce.value,
+      category : filters.category.join( "," ),
+      brand    : filters.brand.join( "," ),
+    },
+  ] ),
+  queryFn: async () => {
+    const params = new URLSearchParams()
+    params.append( "page", String( pagination.value.pageIndex + 1 ) )
+    params.append( "pageSize", String( pagination.value.pageSize ) )
+    if ( searchDebounce.value ) params.append( "search", searchDebounce.value )
+    if ( filters.category.length ) params.append( "category", filters.category.join( "," ) )
+    if ( filters.brand.length ) params.append( "brand", filters.brand.join( "," ) )
+
+    return await $fetch<ApiSuccess<ProductResponse>>( `${baseUrl}/api/products?${params.toString()}` )
   },
-  watch: [filters, pagination, searchDebounce],
 } )
 
-// Categories
-const { data: categoriesData, pending: categoriesPending } = useFetch<{ data: Category[] }>( `${baseUrl}/api/categories`, {
-  server : true,
-  key    : "categories",
+// Alias for template compatibility
+const data = computed( () => productsData.value )
+
+// Categories Query
+const { data: categoriesData, isPending: categoriesPending } = useQuery( {
+  queryKey : ["categories"],
+  queryFn  : async () => await $fetch<{ data: Category[] }>( `${baseUrl}/api/categories` ),
+  staleTime: Infinity, // Never goes stale
 } )
 
 const categories = computed( () => [
@@ -173,10 +189,11 @@ const categories = computed( () => [
     : [] ),
 ] )
 
-// Brands
-const { data: brandsData, pending: brandsPending } = useFetch<{ data: Brand[] }>( `${baseUrl}/api/brands`, {
-  server : true,
-  key    : "brands",
+// Brands Query
+const { data: brandsData, isPending: brandsPending } = useQuery( {
+  queryKey : ["brands"],
+  queryFn  : async () => await $fetch<{ data: Brand[] }>( `${baseUrl}/api/brands` ),
+  staleTime: Infinity, // Never goes stale
 } )
 
 const brands = computed( () => [

@@ -80,6 +80,7 @@
 </template>
 
 <script setup lang="ts">
+import { useQuery } from "@tanstack/vue-query"
 import type { ApiSuccess } from "~~/shared/types"
 import type { ProductResponse } from "~~/shared/types/product"
 
@@ -104,14 +105,19 @@ if ( !$validateSlug( `${route.params.slug}` ) ) {
   slug.value = `${route.params.slug}`
 }
 
-const { data: productData, pending: _productPending } = await useAsyncData( `product-${slug.value}`,
-  () => $fetch<ApiSuccess<{ data: Product[] }>>( `${baseUrl}/api/products`, {
-    params: {
-      slug: slug.value,
-    },
-  } ),
-)
+// Product Query
+const { data: productData, suspense: productSuspense } = useQuery( {
+  queryKey : ["product", slug.value],
+  queryFn  : async () => {
+    return await $fetch<ApiSuccess<{ data: Product[] }>>( `${baseUrl}/api/products`, {
+      params: { slug: slug.value },
+    } )
+  },
+  enabled: !!slug.value,
+} )
 
+// Wait for product data on server
+await productSuspense()
 
 const product = computed( () => productData.value?.data?.data[0] )
 
@@ -120,12 +126,19 @@ if ( !product.value ) {
   throw create404( `${route.params.slug}` )
 }
 
-const { data: uniqueCategoryData, pending: _uniqueCategoryPending } = await useFetch<ApiSuccess<ProductResponse>>( `${baseUrl}/api/products/unique-category`, {
-  key    : `unique-category-products-${slug.value}`,
-  params : {
-    slug: slug.value,
+// Related Products Query
+const { data: uniqueCategoryData, suspense: relatedSuspense } = useQuery( {
+  queryKey : ["unique-category-products", slug.value],
+  queryFn  : async () => {
+    return await $fetch<ApiSuccess<ProductResponse>>( `${baseUrl}/api/products/unique-category`, {
+      params: { slug: slug.value },
+    } )
   },
+  enabled: !!slug.value,
 } )
+
+// Wait for related products data
+await relatedSuspense()
 
 const uniqueCategoryProducts = computed( () => uniqueCategoryData.value?.data?.data || [] )
 

@@ -27,14 +27,22 @@
 </template>
 
 <script lang="ts" setup>
+import { useQuery } from "@tanstack/vue-query"
 import type { ApiSuccess } from "~~/shared/types"
 import type { ProductResponse } from "~~/shared/types/product"
 
 const baseUrl = useRuntimeConfig().public.baseUrl
 
-const { data: uniqueCategoryData } = await useAsyncData<ApiSuccess<ProductResponse>>("unique-category-products-home", () => $fetch(`${baseUrl}/api/products/unique-category`))
+// Catalog Products Query - cached for homepage
+const { data: uniqueCategoryData, suspense } = useQuery( {
+  queryKey : ["unique-category-products-home"],
+  queryFn  : async () => await $fetch<ApiSuccess<ProductResponse>>( `${baseUrl}/api/products/unique-category` ),
+} )
 
-const uniqueCategoryProducts = computed(() => uniqueCategoryData.value?.data?.data || [])
+// Wait for data during SSR
+await suspense()
+
+const uniqueCategoryProducts = computed( () => uniqueCategoryData.value?.data?.data || [] )
 
 /**
  * Transition
