@@ -80,8 +80,6 @@
 </template>
 
 <script setup lang="ts">
-import { onServerPrefetch } from "vue"
-import { useQuery } from "@tanstack/vue-query"
 import type { ApiSuccess } from "~~/shared/types"
 import type { ProductResponse } from "~~/shared/types/product"
 
@@ -106,7 +104,6 @@ if ( !$validateSlug( `${route.params.slug}` ) ) {
   slug.value = `${route.params.slug}`
 }
 
-// Product Query - keep useAsyncData for SSR 404 handling
 const { data: productData } = await useAsyncData( `product-${slug.value}`,
   () => $fetch<ApiSuccess<{ data: Product[] }>>( `${baseUrl}/api/products`, {
     params: { slug: slug.value },
@@ -120,21 +117,9 @@ if ( !product.value ) {
   throw create404( `${route.params.slug}` )
 }
 
-// Related Products Query - Vue Query for client-side caching
-const { data: uniqueCategoryData, suspense: relatedSuspense } = useQuery( {
-  queryKey : ["unique-category-products", slug.value],
-  queryFn  : async () => {
-    return await $fetch<ApiSuccess<ProductResponse>>( `${baseUrl}/api/products/unique-category`, {
-      params: { slug: slug.value },
-    } )
-  },
-  enabled: !!slug.value,
-} )
-
-// SSR Prefetch for related products
-onServerPrefetch( async () => {
-  await relatedSuspense()
-} )
+const { data: uniqueCategoryData } = await useAsyncData( `unique-category-products-${slug.value}`, () => $fetch<ApiSuccess<ProductResponse>>( `${baseUrl}/api/products/unique-category`, {
+  params: { slug: slug.value },
+} ) )
 
 const uniqueCategoryProducts = computed( () => uniqueCategoryData.value?.data?.data || [] )
 

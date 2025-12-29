@@ -5,9 +5,9 @@
 
       <!-- Loading State -->
       <div
-        v-if="isPending"
+        v-if="pending"
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-4 lg:gap-8 max-w-sm md:max-w-[unset] mx-auto md:mx-[unset]">
-        <div v-for="n in 3" :key="n" class="w-full h-96 bg-gray-200 animate-pulse rounded-xl" ></div>
+        <div v-for="n in 3" :key="n" class="w-full h-96 bg-gray-200 animate-pulse rounded-xl"></div>
       </div>
 
       <!-- Empty State -->
@@ -35,9 +35,9 @@
         to="/products"
         class="mx-auto mt-12 button button-primary"
         :class="{
-          'button-disabled': !uniqueCategoryProducts.length || isPending
+          'button-disabled': !uniqueCategoryProducts.length
         }"
-        :disabled="!uniqueCategoryProducts.length || isPending">
+        :disabled="!uniqueCategoryProducts.length">
         Lihat Selengkapnya
       </NuxtLink>
     </div>
@@ -45,23 +45,12 @@
 </template>
 
 <script lang="ts" setup>
-import { onServerPrefetch } from "vue"
-import { useQuery } from "@tanstack/vue-query"
 import type { ApiSuccess } from "~~/shared/types"
 import type { ProductResponse } from "~~/shared/types/product"
 
 const baseUrl = useRuntimeConfig().public.baseUrl
 
-// Catalog Products Query - cached for homepage
-const { data: uniqueCategoryData, suspense, isPending } = useQuery( {
-  queryKey : ["unique-category-products-home"],
-  queryFn  : async () => await $fetch<ApiSuccess<ProductResponse>>( `${baseUrl}/api/products/unique-category` ),
-} )
-
-// SSR Prefetch
-onServerPrefetch( async () => {
-  await suspense()
-} )
+const { data: uniqueCategoryData, pending } = await useAsyncData( "unique-category-products-home", () => $fetch<ApiSuccess<ProductResponse>>( `${baseUrl}/api/products/unique-category` ) )
 
 const uniqueCategoryProducts = computed( () => uniqueCategoryData.value?.data?.data || [] )
 
@@ -114,11 +103,6 @@ const runAnimation = async () => {
 }
 
 onMounted( () => {
-  runAnimation()
-} )
-
-// Re-run animation when data loads (for client-side navigation)
-watch( uniqueCategoryProducts, () => {
   runAnimation()
 } )
 
