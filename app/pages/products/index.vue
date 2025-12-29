@@ -174,9 +174,9 @@ const data = computed( () => productsData.value )
 
 // Categories Query
 const { data: categoriesData, isPending: categoriesPending, suspense: categoriesSuspense } = useQuery( {
-  queryKey : ["categories"],
-  queryFn  : async () => await $fetch<{ data: Category[] }>( `${baseUrl}/api/categories` ),
-  staleTime: Infinity,
+  queryKey  : ["categories"],
+  queryFn   : async () => await $fetch<{ data: Category[] }>( `${baseUrl}/api/categories` ),
+  staleTime : Infinity,
 } )
 
 const categories = computed( () => [
@@ -191,9 +191,9 @@ const categories = computed( () => [
 
 // Brands Query
 const { data: brandsData, isPending: brandsPending, suspense: brandsSuspense } = useQuery( {
-  queryKey : ["brands"],
-  queryFn  : async () => await $fetch<{ data: Brand[] }>( `${baseUrl}/api/brands` ),
-  staleTime: Infinity,
+  queryKey  : ["brands"],
+  queryFn   : async () => await $fetch<{ data: Brand[] }>( `${baseUrl}/api/brands` ),
+  staleTime : Infinity,
 } )
 
 const brands = computed( () => [

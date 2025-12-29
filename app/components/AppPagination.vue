@@ -11,9 +11,9 @@
     </button>
 
     <!-- Page Numbers -->
-    <template v-for="page in displayedPages" :key="page">
+    <template v-for="item in displayedPages" :key="item">
       <span
-        v-if="page === 'ellipsis-start' || page === 'ellipsis-end'"
+        v-if="item === 'ellipsis-start' || item === 'ellipsis-end'"
         class="inline-flex items-center justify-center size-9 text-gray-500">
         ...
       </span>
@@ -22,13 +22,13 @@
         type="button"
         class="inline-flex items-center justify-center size-9 rounded-lg border text-sm font-medium transition-colors duration-200"
         :class="[
-          page === currentPage
+          item === currentPage
             ? 'bg-black text-white border-black'
             : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
         ]"
-        :aria-current="page === currentPage ? 'page' : undefined"
-        @click="goToPage(page as number)">
-        {{ page }}
+        :aria-current="item === currentPage ? 'page' : undefined"
+        @click="goToPage(item as number)">
+        {{ item }}
       </button>
     </template>
 

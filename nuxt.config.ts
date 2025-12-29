@@ -49,7 +49,7 @@ export default defineNuxtConfig( {
     indexable: process.env.NODE_ENV === "production",
   },
   nitro: {
-    prerender : {
+    prerender: {
       routes: [
         "/",
         "/products",
