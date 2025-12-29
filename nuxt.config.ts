@@ -13,6 +13,7 @@ export default defineNuxtConfig( {
           : process.env.VERCEL_ENV === "preview"
             ? `https://${process.env.VERCEL_URL}` // Vercel preview deployments
             : process.env.NUXT_SITE_URL || "http://localhost:3000", // local or vercel dev,
+      baseUrl: process.env.NUXT_BASE_URL,
     },
   },
   modules: [

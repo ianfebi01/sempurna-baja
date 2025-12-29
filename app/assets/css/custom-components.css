@@ -3,6 +3,10 @@
   .button {
     @apply py-2 px-4 text-base flex items-center gap-2 rounded-lg border border-transparent transition-default w-fit hover:border-white/25 group-hover:border-white/25 no-underline hover:shadow-2xl group-hover:shadow-2xl;
 
+    &-disabled {
+      @apply opacity-80 cursor-not-allowed pointer-events-none;
+    }
+
     &-primary {
       @apply bg-black text-white;
     }
