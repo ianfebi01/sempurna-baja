@@ -1,27 +1,27 @@
 <template>
   <section id="katalog" ref="componentRef">
-    <div class="main-container p-20">
+    <div
+      class="main-container py-20
+    ">
       <h1 class="mt-0 mb-12">Produk dari Sempurna Baja</h1>
 
       <!-- FILTER BAR -->
       <div class="flex flex-wrap gap-4 mb-12">
         <!-- Search -->
         <input
-          v-model="filters.q"
+          v-model="search"
           type="text"
           placeholder="Cari produk..."
           class="border border-gray-300 rounded-lg px-4 py-2 w-full sm:w-64 h-10 focus:ring-1 focus:ring-black focus:outline-none transition-colors duration-300 ease-in-out hover:bg-gray-50" />
 
         <!-- Category Filter -->
-        <Menu as="div" class="relative inline-block text-left w-full sm:w-64">
-          <div>
-            <MenuButton
-              class="inline-flex w-full justify-between items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 text-left h-10 focus:ring-1 focus:ring-black focus:outline-none transition-colors duration-300 ease-in-out">
-              <span class="line-clamp-1">{{ selectedCategoryLabel }}</span>
-              <Icon name="fa7-solid:chevron-down" class="size-4" />
-            </MenuButton>
-          </div>
-
+        <Popover as="div" class="relative inline-block text-left w-full sm:w-64">
+          <PopoverButton
+            class="inline-flex w-full justify-between items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 text-left h-10 focus:ring-1 focus:ring-black focus:outline-none transition-colors duration-300 ease-in-out">
+            <span class="line-clamp-1">{{ selectedCategoryLabel }}</span>
+            <Icon v-if="!categoriesPending" name="fa7-solid:chevron-down" class="size-4" />
+            <Icon v-if="categoriesPending" name="fa7-solid:circle-notch" class="size-4 animate-spin" />
+          </PopoverButton>
           <transition
             enter-active-class="transition duration-100 ease-out"
             enter-from-class="transform scale-95 opacity-0"
@@ -29,43 +29,32 @@
             leave-active-class="transition duration-75 ease-in"
             leave-from-class="transform scale-100 opacity-100"
             leave-to-class="transform scale-95 opacity-0">
-            <MenuItems
+            <PopoverPanel
               class="absolute left-0 mt-2 w-full origin-top-left bg-white border border-gray-300 rounded-lg shadow-lg z-10">
               <div class="max-h-[40vh] overflow-y-auto divide-y divide-gray-100">
-                <MenuItem>
-                  <button
-                    type="button"
-                    class="block w-full text-left px-4 py-3 text-sm hover:font-bold transition-default"
-                    :class="{ 'font-bold': filters.category.length === 0 }"
-                    @click="filters.category = []">
-                    Semua Kategori
-                  </button>
-                </MenuItem>
-                <MenuItem v-for="(cat, i) in categories" :key="i">
-                  <button
-                    type="button"
-                    class="w-full text-left px-4 py-3 text-sm hover:font-bold flex justify-between items-center transition-default"
-                    :class="{ 'font-bold': filters.category.includes(cat) }"
-                    @click="toggleCategory(cat)">
-                    <span>{{ cat }}</span>
-                    <CheckIcon v-if="filters.category.includes(cat)" class="size-4" />
-                  </button>
-                </MenuItem>
+                <button
+                  v-for="(cat, i) in categories"
+                  :key="i"
+                  type="button"
+                  class="w-full text-left px-4 py-3 text-sm hover:font-bold flex justify-between items-center transition-default"
+                  :class="{ 'font-bold': filters.category.includes(cat.value) }"
+                  @click.stop="toggleCategory(cat.value)">
+                  <span>{{ cat.label }}</span>
+                  <Icon v-if="filters.category.includes(cat.value)" name="fa7-solid:check" class="size-4" />
+                </button>
               </div>
-            </MenuItems>
+            </PopoverPanel>
           </transition>
-        </Menu>
+        </Popover>
 
         <!-- Brand Filter -->
-        <Menu as="div" class="relative inline-block text-left w-full sm:w-64">
-          <div>
-            <MenuButton
-              class="inline-flex w-full justify-between items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-left font-medium hover:bg-gray-50 h-10 focus:ring-1 focus:ring-black focus:outline-none transition-colors duration-300 ease-in-out">
-              <span class="line-clamp-1">{{ selectedBrandLabel }}</span>
-              <Icon name="fa7-solid:chevron-down" class="size-4" />
-            </MenuButton>
-          </div>
-
+        <Popover as="div" class="relative inline-block text-left w-full sm:w-64">
+          <PopoverButton
+            class="inline-flex w-full justify-between items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-left font-medium hover:bg-gray-50 h-10 focus:ring-1 focus:ring-black focus:outline-none transition-colors duration-300 ease-in-out">
+            <span class="line-clamp-1">{{ selectedBrandLabel }}</span>
+            <Icon v-if="!brandsPending" name="fa7-solid:chevron-down" class="size-4" />
+            <Icon v-if="brandsPending" name="fa7-solid:circle-notch" class="size-4 animate-spin" />
+          </PopoverButton>
           <transition
             enter-active-class="transition duration-100 ease-out"
             enter-from-class="transform scale-95 opacity-0"
@@ -73,33 +62,24 @@
             leave-active-class="transition duration-75 ease-in"
             leave-from-class="transform scale-100 opacity-100"
             leave-to-class="transform scale-95 opacity-0">
-            <MenuItems
+            <PopoverPanel
               class="absolute left-0 mt-2 w-full origin-top-left bg-white border border-gray-300 rounded-lg shadow-lg z-10">
               <div class="max-h-[40vh] overflow-y-auto divide-y divide-gray-100">
-                <MenuItem>
-                  <button
-                    type="button"
-                    class="block w-full text-left px-4 py-3 text-sm hover:font-bold transition-default"
-                    :class="{ 'font-bold': filters.brand.length === 0 }"
-                    @click="filters.brand = []">
-                    Semua Brand
-                  </button>
-                </MenuItem>
-                <MenuItem v-for="(brand, i) in brands" :key="i">
-                  <button
-                    type="button"
-                    class="w-full text-left px-4 py-3 text-sm hover:font-bold flex justify-between items-center transition-default"
-                    :class="{ 'font-bold': filters.brand.includes(brand) }"
-                    @click="toggleBrand(brand)">
-                    <span>{{ brand }}</span>
-                    <CheckIcon v-if="filters.brand.includes(brand)" class="size-4" />
-                  </button>
-                </MenuItem>
+                <button
+                  v-for="(brand, i) in brands"
+                  :key="i"
+                  type="button"
+                  class="w-full text-left px-4 py-3 text-sm hover:font-bold flex justify-between items-center transition-default"
+                  :class="{ 'font-bold': filters.brand.includes(brand.value) }"
+                  @click.stop="toggleBrand(brand.value)">
+                  <span>{{ brand.label }}</span>
+                  <Icon v-if="filters.brand.includes(brand.value)" name="fa7-solid:check" class="size-4" />
+                </button>
               </div>
-            </MenuItems>
+            </PopoverPanel>
           </transition>
-        </Menu>
-        
+        </Popover>
+
         <button class="button button-primary h-10" @click="resetFilter">Reset Filter</button>
       </div>
 
@@ -107,9 +87,32 @@
       <div
         ref="itemRef"
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-4 lg:gap-8 max-w-sm md:max-w-[unset] mx-auto md:mx-[unset] opacity-0 translate-y-8">
-        <div v-for="(item) in filteredProducts" :key="item.id">
-          <ProductCard :product="item" />
+        <template v-if="!pending">
+          <div v-for="(item) in data?.data.data" :key="item._id">
+            <ProductCard :product="item" />
+          </div>
+        </template>
+        <template v-else-if="pending">
+          <div v-for="n in pagination.pageSize" :key="n" class="w-full h-96 bg-gray-200 animate-pulse rounded-xl"></div>
+        </template>
+      </div>
+
+      <div v-if="!pending && data?.data.data?.length" class="flex items-center justify-between gap-3 pt-4 mt-auto">
+        <div class="text-sm text-muted">
+          {{ pagination.pageSize * (pagination.pageIndex + 1) }} dari
+          {{ data?.data?.meta?.total || 0 }} total.
         </div>
+
+        <div class="flex items-center gap-1.5">
+          <AppPagination
+            :page="(pagination.pageIndex || 0) + 1"
+            :items-per-page="pagination.pageSize"
+            :total="data?.data?.meta?.total || 0"
+            @update:page="(p: number) => pagination.pageIndex = p - 1" />
+        </div>
+      </div>
+      <div v-if="!pending && !data?.data.data?.length" class="text-center text-muted mt-12">
+        Tidak ada produk ditemukan.
       </div>
     </div>
   </section>
@@ -117,63 +120,125 @@
 
 <script lang="ts" setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue"
-import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue"
-import products from "@/assets/json/products.json"
-toRaw( products )
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue"
+import type { ApiSuccess } from "~~/shared/types"
+import type { ProductResponse } from "~~/shared/types/product"
+
+const baseUrl = useRuntimeConfig().public.baseUrl
 
 const filters = reactive( {
-    q        : "",
-    category : [] as string[],
-    brand    : [] as string[],
+  category : [] as string[],
+  brand    : [] as string[],
 } )
 
-const categories = [...new Set( products.map( p => p.category ) )]
-const brands = [...new Set( products.map( p => p.brand ) )]
+const search = ref( "" )
+
+const searchDebounce = useDebounce( search, 500 )
+
+watch( searchDebounce, () => {
+  pagination.value.pageIndex = 0
+} )
+
+const pagination = ref( {
+  pageIndex : 0,
+  pageSize  : 9,
+} )
+
+const { data, pending } = await useFetch<ApiSuccess<ProductResponse>>( `${baseUrl}/api/products`, {
+  key    : `products-${searchDebounce.value}-${filters.category.join( "," )}-${filters.brand.join( "," )}`,
+  server : true,
+  params : {
+    page     : computed( () => pagination.value.pageIndex + 1 ),
+    pageSize : computed( () => pagination.value.pageSize ),
+    search   : computed( () => searchDebounce.value ),
+    category : computed( () => filters.category.join( "," ) ),
+    brand    : computed( () => filters.brand.join( "," ) ),
+  },
+  watch: [filters, pagination, searchDebounce],
+} )
+
+// Categories
+const { data: categoriesData, pending: categoriesPending } = useFetch<{ data: Category[] }>( `${baseUrl}/api/categories`, {
+  server : true,
+  key    : "categories",
+} )
+
+const categories = computed( () => [
+  { label: "Semua Kategori", value: "all" },
+  ...( Array.isArray( categoriesData.value?.data )
+    ? categoriesData.value.data.map( ( category ) => ( {
+      label : category.name,
+      value : category._id,
+    } ) )
+    : [] ),
+] )
+
+// Brands
+const { data: brandsData, pending: brandsPending } = useFetch<{ data: Brand[] }>( `${baseUrl}/api/brands`, {
+  server : true,
+  key    : "brands",
+} )
+
+const brands = computed( () => [
+  { label: "Semua Brand", value: "all" },
+  ...( Array.isArray( brandsData.value?.data )
+    ? brandsData.value.data.map( ( brand ) => ( {
+      label : brand.name,
+      value : brand._id,
+    } ) )
+    : [] ),
+] )
 
 // --- Toggle helpers (reactive-safe)
 const toggleCategory = ( cat: string ) => {
+
+  if ( cat === "all" ) {
+    filters.category = []
+  } else {
     const i = filters.category.indexOf( cat )
     if ( i > -1 ) filters.category.splice( i, 1 )
     else filters.category.push( cat )
+  }
+  pagination.value.pageIndex = 0
 }
 
 const toggleBrand = ( brand: string ) => {
+  if ( brand === "all" ) {
+    filters.brand = []
+  } else {
     const i = filters.brand.indexOf( brand )
     if ( i > -1 ) filters.brand.splice( i, 1 )
     else filters.brand.push( brand )
+  }
+  pagination.value.pageIndex = 0
 }
 
 // ✅ Reactive-safe internal reset
 const resetFilter = () => {
-    filters.brand.splice( 0 )
-    filters.category.splice( 0 )
-    filters.q = ""
+  filters.brand.splice( 0 )
+  filters.category.splice( 0 )
+  search.value = ""
+  pagination.value.pageIndex = 0
 }
 
 const selectedCategoryLabel = computed( () =>
-    filters.category.length === 0
-        ? "Semua Kategori"
-        : filters.category.join( ", " ),
+  filters.category.length === 0
+    ? "Semua Kategori"
+    : categories.value
+      .filter( ( c ) => filters.category.includes( c.value ) )
+      .map( ( c ) => c.label )
+      .join( ", " ),
 )
 
 const selectedBrandLabel = computed( () =>
-    filters.brand.length === 0 ? "Semua Brand" : filters.brand.join( ", " ),
+  filters.brand.length === 0
+    ? "Semua Brand"
+    : brands.value
+      .filter( ( b ) => filters.brand.includes( b.value ) )
+      .map( ( b ) => b.label )
+      .join( ", " ),
 )
 
-const filteredProducts = computed( () => {
-    return products.filter( ( p ) => {
-        const q = filters.q.toLowerCase()
-        const matchQ =
-            !q ||
-            p.name.toLowerCase().includes( q ) ||
-            p.description?.toLowerCase().includes( q )
-        const matchCat =
-            filters.category.length === 0 || filters.category.includes( p.category )
-        const matchBrand =
-            filters.brand.length === 0 || filters.brand.includes( p.brand )
-        return matchQ && matchCat && matchBrand
-    } )
-} )
 
 /**
  * Transition
@@ -185,41 +250,41 @@ let ctx: gsap.Context | null = null
 
 
 onMounted( async () => {
-    if ( !import.meta.client ) return
+  if ( !import.meta.client ) return
 
-    // Lazy import GSAP & plugins only in browser
-    const gsap = ( await import( "gsap" ) ).default
-    const { ScrollTrigger } = await import( "gsap/ScrollTrigger" )
+  // Lazy import GSAP & plugins only in browser
+  const gsap = ( await import( "gsap" ) ).default
+  const { ScrollTrigger } = await import( "gsap/ScrollTrigger" )
 
-    gsap.registerPlugin( ScrollTrigger )
+  gsap.registerPlugin( ScrollTrigger )
 
-    if ( !componentRef.value ) return
-    ctx = gsap.context( () => {
-        const tl = gsap.timeline( {
-            scrollTrigger: {
-                trigger       : componentRef.value,
-                start         : "top 100%",
-                toggleActions : "play none none none",
-            },
-        } )
+  if ( !componentRef.value ) return
+  ctx = gsap.context( () => {
+    const tl = gsap.timeline( {
+      scrollTrigger: {
+        trigger       : componentRef.value,
+        start         : "top 100%",
+        toggleActions : "play none none none",
+      },
+    } )
 
-        if ( itemRef.value ) {
-            tl.to( itemRef.value, {
-                ease       : "power2.out",
-                translateY : 0,
-                duration   : 1,
-                opacity    : 1,
-                delay      : 0.2,
-                stagger    : 0.2,
-            } )
-        }
+    if ( itemRef.value ) {
+      tl.to( itemRef.value, {
+        ease       : "power2.out",
+        translateY : 0,
+        duration   : 1,
+        opacity    : 1,
+        delay      : 0.2,
+        stagger    : 0.2,
+      } )
+    }
 
-    }, ( componentRef.value as HTMLElement ) )
+  }, ( componentRef.value as HTMLElement ) )
 } )
 
 
 onBeforeUnmount( () => {
-    if ( ctx ) ctx.revert()
+  if ( ctx ) ctx.revert()
 } )
 
 /**
