@@ -59,64 +59,64 @@ const props = withDefaults(
     siblingCount?: number
   }>(),
   {
-    page: 1,
-    itemsPerPage: 10,
-    total: 0,
-    siblingCount: 1,
-  }
+    page         : 1,
+    itemsPerPage : 10,
+    total        : 0,
+    siblingCount : 1,
+  },
 )
 
 const emit = defineEmits<{
   "update:page": [page: number]
 }>()
 
-const currentPage = computed(() => props.page)
+const currentPage = computed( () => props.page )
 
-const totalPages = computed(() =>
-  Math.max(1, Math.ceil(props.total / props.itemsPerPage))
+const totalPages = computed( () =>
+  Math.max( 1, Math.ceil( props.total / props.itemsPerPage ) ),
 )
 
-const displayedPages = computed(() => {
-  const pages: (number | string)[] = []
+const displayedPages = computed( () => {
+  const pages: ( number | string )[] = []
   const total = totalPages.value
   const current = currentPage.value
   const siblings = props.siblingCount
 
   // Always show first page
-  pages.push(1)
+  pages.push( 1 )
 
   // Calculate start and end of sibling range
-  const siblingStart = Math.max(2, current - siblings)
-  const siblingEnd = Math.min(total - 1, current + siblings)
+  const siblingStart = Math.max( 2, current - siblings )
+  const siblingEnd = Math.min( total - 1, current + siblings )
 
   // Add ellipsis after first page if needed
-  if (siblingStart > 2) {
-    pages.push("ellipsis-start")
+  if ( siblingStart > 2 ) {
+    pages.push( "ellipsis-start" )
   }
 
   // Add sibling pages
-  for (let i = siblingStart; i <= siblingEnd; i++) {
-    if (i !== 1 && i !== total) {
-      pages.push(i)
+  for ( let i = siblingStart; i <= siblingEnd; i++ ) {
+    if ( i !== 1 && i !== total ) {
+      pages.push( i )
     }
   }
 
   // Add ellipsis before last page if needed
-  if (siblingEnd < total - 1) {
-    pages.push("ellipsis-end")
+  if ( siblingEnd < total - 1 ) {
+    pages.push( "ellipsis-end" )
   }
 
   // Always show last page (if more than 1 page)
-  if (total > 1) {
-    pages.push(total)
+  if ( total > 1 ) {
+    pages.push( total )
   }
 
   return pages
-})
+} )
 
-const goToPage = (page: number) => {
-  if (page >= 1 && page <= totalPages.value) {
-    emit("update:page", page)
+const goToPage = ( page: number ) => {
+  if ( page >= 1 && page <= totalPages.value ) {
+    emit( "update:page", page )
   }
 }
 </script>

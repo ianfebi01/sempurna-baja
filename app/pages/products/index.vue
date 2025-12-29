@@ -119,7 +119,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue"
+import { ref, reactive, computed, onMounted, onBeforeUnmount, onServerPrefetch } from "vue"
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue"
 import { useQuery } from "@tanstack/vue-query"
 import type { ApiSuccess } from "~~/shared/types"
@@ -145,8 +145,8 @@ const pagination = ref( {
   pageSize  : 9,
 } )
 
-// Products Query
-const { data: productsData, isPending: pending } = useQuery( {
+// Products Query - using Vue Query with reactive queryKey
+const { data: productsData, isPending: pending, suspense: productsSuspense } = useQuery( {
   queryKey: computed( () => [
     "products",
     {
@@ -173,10 +173,10 @@ const { data: productsData, isPending: pending } = useQuery( {
 const data = computed( () => productsData.value )
 
 // Categories Query
-const { data: categoriesData, isPending: categoriesPending } = useQuery( {
+const { data: categoriesData, isPending: categoriesPending, suspense: categoriesSuspense } = useQuery( {
   queryKey : ["categories"],
   queryFn  : async () => await $fetch<{ data: Category[] }>( `${baseUrl}/api/categories` ),
-  staleTime: Infinity, // Never goes stale
+  staleTime: Infinity,
 } )
 
 const categories = computed( () => [
@@ -190,10 +190,10 @@ const categories = computed( () => [
 ] )
 
 // Brands Query
-const { data: brandsData, isPending: brandsPending } = useQuery( {
+const { data: brandsData, isPending: brandsPending, suspense: brandsSuspense } = useQuery( {
   queryKey : ["brands"],
   queryFn  : async () => await $fetch<{ data: Brand[] }>( `${baseUrl}/api/brands` ),
-  staleTime: Infinity, // Never goes stale
+  staleTime: Infinity,
 } )
 
 const brands = computed( () => [
@@ -205,6 +205,15 @@ const brands = computed( () => [
     } ) )
     : [] ),
 ] )
+
+// SSR Prefetch - this runs on server and dehydrates to payload
+onServerPrefetch( async () => {
+  await Promise.all( [
+    productsSuspense(),
+    categoriesSuspense(),
+    brandsSuspense(),
+  ] )
+} )
 
 // --- Toggle helpers (reactive-safe)
 const toggleCategory = ( cat: string ) => {

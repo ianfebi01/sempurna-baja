@@ -1,29 +1,42 @@
-import { VueQueryPlugin, QueryClient, hydrate, dehydrate } from "@tanstack/vue-query"
+import type {
+  DehydratedState,
+  VueQueryPluginOptions,
+} from "@tanstack/vue-query"
+import {
+  VueQueryPlugin,
+  QueryClient,
+  hydrate,
+  dehydrate,
+} from "@tanstack/vue-query"
+// Nuxt 3 app aliases
+import { defineNuxtPlugin, useState } from "#imports"
 
 export default defineNuxtPlugin( ( nuxt ) => {
+  const vueQueryState = useState<DehydratedState | null>( "vue-query" )
+
+  // Modify your Vue Query global settings here
   const queryClient = new QueryClient( {
     defaultOptions: {
       queries: {
-        staleTime      : 1000 * 60 * 5, // 5 minutes - data is fresh for this long
-        gcTime         : 1000 * 60 * 30, // 30 minutes - cache persists this long
-        refetchOnMount : false, // Don't refetch when component mounts if data is fresh
-        retry          : 1,
+        staleTime : 5 * 60 * 1000, // 5 minutes
+        gcTime    : import.meta.server ? 0 : 30 * 60 * 1000, // No GC timer on server to allow process exit
       },
     },
   } )
 
-  nuxt.vueApp.use( VueQueryPlugin, { queryClient } )
+  const options: VueQueryPluginOptions = { queryClient }
 
-  // Handle SSR hydration
+  nuxt.vueApp.use( VueQueryPlugin, options )
+
   if ( import.meta.server ) {
     nuxt.hooks.hook( "app:rendered", () => {
-      nuxt.payload.vueQueryState = dehydrate( queryClient )
+      vueQueryState.value = dehydrate( queryClient )
+      // Clear the query cache after dehydrating to allow process to exit
+      queryClient.clear()
     } )
   }
 
   if ( import.meta.client ) {
-    nuxt.hooks.hook( "app:created", () => {
-      hydrate( queryClient, nuxt.payload.vueQueryState )
-    } )
+    hydrate( queryClient, vueQueryState.value )
   }
 } )

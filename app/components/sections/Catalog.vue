@@ -2,9 +2,17 @@
   <section id="katalog" ref="componentRef">
     <div class="main-container p-20">
       <h2 class="h1 mt-0 text-center mb-12">Katalog Produk</h2>
+
+      <!-- Loading State -->
+      <div v-if="isPending"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-4 lg:gap-8 max-w-sm md:max-w-[unset] mx-auto md:mx-[unset]">
+        <div v-for="n in 3" :key="n" class="w-full h-96 bg-gray-200 animate-pulse rounded-xl" />
+      </div>
+
       <!-- Empty State -->
-      <div v-if="!uniqueCategoryProducts.length" class="flex flex-col items-center justify-center py-16 text-gray-500">
-        <UIcon name="i-heroicons-cube" class="w-16 h-16 mb-4 text-gray-300" />
+      <div v-else-if="!uniqueCategoryProducts.length"
+        class="flex flex-col items-center justify-center py-16 text-gray-500">
+        <Icon name="heroicons:cube" class="w-16 h-16 mb-4 text-gray-300" />
         <p class="text-lg font-medium">Tidak ada produk</p>
         <p class="text-sm">Produk belum tersedia saat ini</p>
       </div>
@@ -13,13 +21,13 @@
       <div v-else
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-4 lg:gap-8 max-w-sm md:max-w-[unset] mx-auto md:mx-[unset]">
         <div v-for="(item, index) in uniqueCategoryProducts" :ref="el => itemsRef[index] = (el as HTMLDivElement)"
-          :key="index" class="opacity-0 translate-y-8">
+          :key="item._id || index" class="opacity-0 translate-y-8">
           <ProductCard :product="item" />
         </div>
       </div>
       <NuxtLink to="/products" class="mx-auto mt-12 button button-primary" :class="{
-        'button-disabled': !uniqueCategoryProducts.length
-      }" :disabled="!uniqueCategoryProducts.length">
+        'button-disabled': !uniqueCategoryProducts.length || isPending
+      }" :disabled="!uniqueCategoryProducts.length || isPending">
         Lihat Selengkapnya
       </NuxtLink>
     </div>
@@ -27,6 +35,7 @@
 </template>
 
 <script lang="ts" setup>
+import { onServerPrefetch } from "vue"
 import { useQuery } from "@tanstack/vue-query"
 import type { ApiSuccess } from "~~/shared/types"
 import type { ProductResponse } from "~~/shared/types/product"
@@ -34,15 +43,17 @@ import type { ProductResponse } from "~~/shared/types/product"
 const baseUrl = useRuntimeConfig().public.baseUrl
 
 // Catalog Products Query - cached for homepage
-const { data: uniqueCategoryData, suspense } = useQuery( {
-  queryKey : ["unique-category-products-home"],
-  queryFn  : async () => await $fetch<ApiSuccess<ProductResponse>>( `${baseUrl}/api/products/unique-category` ),
-} )
+const { data: uniqueCategoryData, suspense, isPending } = useQuery({
+  queryKey: ["unique-category-products-home"],
+  queryFn: async () => await $fetch<ApiSuccess<ProductResponse>>(`${baseUrl}/api/products/unique-category`),
+})
 
-// Wait for data during SSR
-await suspense()
+// SSR Prefetch
+onServerPrefetch(async () => {
+  await suspense()
+})
 
-const uniqueCategoryProducts = computed( () => uniqueCategoryData.value?.data?.data || [] )
+const uniqueCategoryProducts = computed(() => uniqueCategoryData.value?.data?.data || [])
 
 /**
  * Transition
@@ -52,9 +63,10 @@ const itemsRef = ref<HTMLDivElement[] | null[]>([])
 const componentRef = ref<HTMLElement>()
 let ctx: gsap.Context | null = null
 
-
-onMounted(async () => {
+const runAnimation = async () => {
   if (!import.meta.client) return
+  if (!uniqueCategoryProducts.value.length) return
+  if (!componentRef.value) return
 
   // Lazy import GSAP & plugins only in browser
   const gsap = (await import("gsap")).default
@@ -62,7 +74,12 @@ onMounted(async () => {
 
   gsap.registerPlugin(ScrollTrigger)
 
-  if (!componentRef.value) return
+  // Clean up previous animation context
+  if (ctx) ctx.revert()
+
+  // Wait for DOM to update
+  await nextTick()
+
   ctx = gsap.context(() => {
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -84,8 +101,16 @@ onMounted(async () => {
     }
 
   }, (componentRef.value as HTMLElement))
+}
+
+onMounted(() => {
+  runAnimation()
 })
 
+// Re-run animation when data loads (for client-side navigation)
+watch(uniqueCategoryProducts, () => {
+  runAnimation()
+})
 
 onBeforeUnmount(() => {
   if (ctx) ctx.revert()
