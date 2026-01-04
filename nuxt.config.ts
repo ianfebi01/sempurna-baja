@@ -1,5 +1,3 @@
-import products from "./app/assets/json/products.json"
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig( {
   compatibilityDate : "2025-07-15",
@@ -13,6 +11,7 @@ export default defineNuxtConfig( {
           : process.env.VERCEL_ENV === "preview"
             ? `https://${process.env.VERCEL_URL}` // Vercel preview deployments
             : process.env.NUXT_SITE_URL || "http://localhost:3000", // local or vercel dev,
+      baseUrl: process.env.NUXT_BASE_URL,
     },
   },
   modules: [
@@ -48,8 +47,7 @@ export default defineNuxtConfig( {
     indexable: process.env.NODE_ENV === "production",
   },
   nitro: {
-    preset    : process.env.VERCEL ? "vercel" : "static",
-    prerender : {
+    prerender: {
       routes: [
         "/",
         "/products",
@@ -63,7 +61,23 @@ export default defineNuxtConfig( {
         return
       }
 
-      products.forEach( ( item ) => nitroConfig?.prerender?.routes?.push( `/products/${item.slug}` ) )
+      // Fetch products from the API server for prerendering
+      const baseUrl = process.env.NUXT_BASE_URL
+      if ( !baseUrl ) {
+        console.warn( "[prerender] NUXT_BASE_URL is not set, skipping dynamic product routes" )
+        return
+      }
+
+      try {
+        const response = await fetch( `${baseUrl}/api/products?pageSize=1000` )
+        const result = await response.json() as { data: { data: Array<{ slug: string }> } }
+        const products = result?.data?.data || []
+
+        products.forEach( ( item ) => nitroConfig?.prerender?.routes?.push( `/products/${item.slug}` ) )
+        console.log( `[prerender] Added ${products.length} product routes` )
+      } catch ( error ) {
+        console.error( "[prerender] Failed to fetch products:", error )
+      }
     },
   },
   router: {
