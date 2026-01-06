@@ -87,5 +87,7 @@ export default defineNuxtConfig( {
   },
   plugins: [
     "~/plugins/ValidateSlug.ts",
+    "~/plugins/Section.ts",
+    "~/plugins/Hero.ts",
   ],
 } )
