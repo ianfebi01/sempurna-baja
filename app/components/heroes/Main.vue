@@ -1,5 +1,4 @@
 <template>
-  <pre>{{ data }}</pre>
   <section ref="containerRef" class="relative md:h-[calc(100vh-64px)] overflow-hidden">
     <div class="h-full main-container flex flex-col md:flex-row md:items-center gap-8 py-16 md:py-20">
       <div ref="textRef" class="flex flex-col max-w-2xl opacity-0 translate-y-8">
