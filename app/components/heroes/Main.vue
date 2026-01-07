@@ -7,11 +7,11 @@
           <h2 v-if="data.subtitle" ref="headingRef" class="text-xl md:text-2xl font-normal">{{ data.subtitle }}</h2>
           <div class="flex items-center gap-6 md:gap-8 mt-8 md:mt-16 flex-wrap">
             <NuxtLink v-if="data.ctaLink" :to="data.ctaLink" class="button button-primary">
-              <Icon name="fa7-solid:paper-plane" />
+              <Icon v-if="data?.ctaIcon" :name="data?.ctaIcon" />
               {{ data.ctaText || 'Chat WhatsApp' }}
             </NuxtLink>
             <NuxtLink v-if="data.secondaryCtaLink" :to="data.secondaryCtaLink" class="button button-secondary">
-              <Icon name="fa7-solid:images" />
+              <Icon v-if="data?.secondaryCtaIcon" :name="data?.secondaryCtaIcon" />
               {{ data.secondaryCtaText || 'Lihat Katalog' }}
             </NuxtLink>
           </div>
@@ -30,9 +30,9 @@
           <!-- overlay shadow bottom -->
           <div class="absolute w-full bottom-0 bg-gradient-to-t from-[#000]/80 to-transparent h-full z-0">
           </div>
-          <div class="p-4 lg:p-8 relative z-[1] mt-4">
-            <p class="h2 m-0">{{ data.title }}</p>
-            <p v-if="data.subtitle" class="m-0">{{ data.subtitle }}</p>
+          <div v-if="data.imageTitle || data.imageSubtitle" class="p-4 lg:p-8 relative z-[1] mt-4">
+            <p v-if="data.imageTitle" class="h2 m-0">{{ data.imageTitle }}</p>
+            <p v-if="data.imageSubtitle" class="m-0">{{ data.imageSubtitle }}</p>
           </div>
         </div>
       </div>
@@ -41,8 +41,6 @@
 </template>
 
 <script setup lang="ts">
-import type { MainHeroBanner } from "~~/shared/types/page"
-
 defineProps<{
   data: Omit<MainHeroBanner, "type">
   h1: string
