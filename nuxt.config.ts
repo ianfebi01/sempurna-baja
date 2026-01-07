@@ -14,7 +14,8 @@ export default defineNuxtConfig( {
       baseUrl: process.env.NUXT_BASE_URL,
     },
   },
-  modules: [
+  ssr     : process.env.NODE_ENV === "production" ? true : false,
+  modules : [
     "@nuxt/eslint",
     "@nuxtjs/tailwindcss",
     "@nuxtjs/sitemap",
