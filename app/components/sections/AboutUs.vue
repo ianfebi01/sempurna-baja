@@ -1,46 +1,23 @@
 <template>
   <section ref="containerRef">
     <div class="main-container p-20">
-      <h2 class="h1 mt-0 text-center mb-12">Tentang Kami</h2>
+      <h2 class="h1 mt-0 text-center mb-12">{{ sectionData.title }}</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div :ref="el => itemsRef[0] = (el as HTMLDivElement)" class="opacity-0 translate-y-8 h-full">
+        <div
+          v-for="(item, index) in sectionData.items"
+          :key="index"
+          :ref="el => itemsRef[index] = (el as HTMLDivElement)"
+          class="opacity-0 translate-y-8 h-full">
           <div
             class="bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default p-8 text-center rounded-xl h-full">
             <div class="overflow-hidden p-6">
               <img
-                src="@/assets/images/map-65.svg"
-                alt="map"
+                :src="item.image"
+                :alt="item.title"
                 class="w-full h-full object-contain object-center" />
             </div>
-            <h3>Pengiriman Cepat</h3>
-            <p>Pengiriman cepat ke Wonosari, Playen, Karangmojo, Semanu, Panggang, Paliyan, dan sekitarnya.</p>
-          </div>
-        </div>
-        <div :ref="el => itemsRef[1] = (el as HTMLDivElement)" class="opacity-0 translate-y-8">
-          <div
-            class="bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default p-8 text-center rounded-xl h-full">
-            <div class="overflow-hidden p-6">
-              <img
-                src="@/assets/images/construction-worker-27.svg"
-                alt="construction-worker"
-                class="w-full h-full object-contain object-center" />
-            </div>
-            <h3>Jasa Pasang Profesional</h3>
-            <p>Tenaga berpengalaman, rapi, tepat waktu, dan bergaransi.</p>
-          </div>
-        </div>
-        <div :ref="el => itemsRef[2] = (el as HTMLDivElement)" class="opacity-0 translate-y-8">
-
-          <div
-            class="bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default p-8 text-center rounded-xl h-full">
-            <div class="overflow-hidden p-6">
-              <img
-                src="@/assets/images/checklist-1-7.svg"
-                alt="checklist"
-                class="w-full h-full object-contain object-center" />
-            </div>
-            <h3>Material Berkualitas</h3>
-            <p>Pilihan merek tepercaya seperti Zenium & Java Pasific.</p>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
           </div>
         </div>
       </div>
@@ -49,6 +26,12 @@
 </template>
 
 <script setup lang="ts">
+import type { AboutUsSection } from "~~/shared/types/page"
+
+defineProps<{
+  sectionData: AboutUsSection
+}>()
+
 const containerRef = ref<HTMLElement | null>( null )
 const itemsRef = ref<HTMLDivElement[]>( [] )
 let ctx: gsap.Context | null = null
