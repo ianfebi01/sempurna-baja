@@ -1,27 +1,28 @@
 <template>
   <section ref="containerRef">
     <div class="main-container p-20">
-      <h2 class="h1 mt-0 text-center mb-12">Testimoni Pelanggan</h2>
+      <h2 class="h1 mt-0 text-center mb-12">{{ sectionData.title }}</h2>
       <div
         class="bg-gradient-to-t from-gray-100 to-white hover:shadow-2xl transition-default p-8 text-center rounded-xl relative">
         <blockquote
           ref="textRef"
-          cite="https://www.example.com/artikel"
           class="text-2xl text-center mb-8 max-w-2xl mx-auto opacity-0 scale-75">
           <Icon name="fa7-solid:quote-left" />
-          Hasil pemasangan sangat rapidan cepat, rumah jadi lebih rapi dengan plafon PVC.
+          {{ sectionData.testimonialText }}
           <Icon name="fa7-solid:quote-right" />
         </blockquote>
         <div class="flex items-center gap-2 text-yellow-300 justify-center mb-8">
-          <template v-for="item in 5" :key="item">
+          <template v-for="item in sectionData.rating" :key="item">
             <Icon name="fa7-solid:star" />
           </template>
         </div>
+        <p class="font-semibold text-lg mb-8">{{ sectionData.customerName }}</p>
         <div
+          v-if="sectionData.customerImage"
           class="overflow-hidden size-20 aspect-square rounded-full absolute bottom-0 inset-x-0 mx-auto translate-y-1/2 border-4 border-gray-100">
           <img
-            src="@/assets/images/ianfebi.webp"
-            alt="calendar"
+            :src="sectionData.customerImage"
+            :alt="sectionData.customerName"
             class="w-full h-full object-contain object-center" />
         </div>
       </div>
@@ -30,6 +31,12 @@
 </template>
 
 <script setup lang="ts">
+import type { TestimoniSection } from "~~/shared/types/page"
+
+defineProps<{
+  sectionData: TestimoniSection
+}>()
+
 const containerRef = ref<HTMLElement | null>( null )
 const textRef = ref<( HTMLElement | null )>( null )
 let ctx: gsap.Context | null = null
