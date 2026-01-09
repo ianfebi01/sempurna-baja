@@ -10,4 +10,5 @@ export const sectionComponents = ( resolve: boolean = true ): Record<string, str
     "quote"     : !resolve ? "./app/components/sections/Quote.vue" : import( "@/components/sections/Quote.vue" ),
     "service"   : !resolve ? "./app/components/sections/Service.vue" : import( "@/components/sections/Service.vue" ),
     "testimoni" : !resolve ? "./app/components/sections/Testimoni.vue" : import( "@/components/sections/Testimoni.vue" ),
+    "bodyCopy"  : !resolve ? "./app/components/sections/BodyCopy.vue" : import( "@/components/sections/BodyCopy.vue" ),
 } )
