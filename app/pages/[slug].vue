@@ -7,6 +7,7 @@
 
 <script setup lang="ts">
 import type { ApiSuccess } from "~~/shared/types"
+import qs from "qs"
 
 
 const route = useRoute()
@@ -27,9 +28,8 @@ if ( !$validateSlug( `${route.params.slug}` ) ) {
     throw create404( `${route.params.slug}` )
 }
 
-const { data } = await useAsyncData( `page-${slug}`, () => $fetch<ApiSuccess<Page>>( `${baseUrl}/api/pages/slug/${slug}`, {
-    params: { published: false },
-} ) )
+const query = qs.stringify( { published: false, homePage: false } )
+const { data } = await useAsyncData( `page-${slug}`, () => $fetch<ApiSuccess<Page>>( `${baseUrl}/api/pages/slug/${slug}?${query}` ) )
 
 const page = computed( () => data.value?.data )
 
