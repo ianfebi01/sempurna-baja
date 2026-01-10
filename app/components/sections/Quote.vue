@@ -4,10 +4,10 @@
       <div class=" max-w-2xl mx-auto">
         <blockquote
           ref="textRef"
-          cite="https://www.example.com/artikel"
+          :cite="sectionData.citeUrl"
           class="text-3xl text-center opacity-0 scale-75">
           <Icon name="fa7-solid:quote-left" />
-          Kami percaya, setiap proyek — besar atau kecil — layak mendapatkan hasil terbaik dari material dan pemasangan yang sempurna.
+          {{ sectionData.quoteText }}
           <Icon name="fa7-solid:quote-right" />
         </blockquote>
       </div>
@@ -16,6 +16,12 @@
 </template>
 
 <script setup lang="ts">
+import type { QuoteSection } from "~~/shared/types/page"
+
+defineProps<{
+  sectionData: QuoteSection
+}>()
+
 const containerRef = ref<HTMLElement | null>( null )
 const textRef = ref<( HTMLElement | null )>( null )
 let ctx: gsap.Context | null = null

@@ -4,7 +4,8 @@ export default defineNuxtConfig( {
   devtools          : { enabled: true },
   runtimeConfig     : {
     public: {
-      siteName: process.env.NUXT_SITE_NAME,
+      prod     : process.env.VERCEL_ENV === "production",
+      siteName : process.env.NUXT_SITE_NAME,
       siteUrl:
         process.env.VERCEL_ENV === "production"
           ? process.env.NUXT_SITE_URL // your custom domain, e.g. https://mysite.com
@@ -14,7 +15,8 @@ export default defineNuxtConfig( {
       baseUrl: process.env.NUXT_BASE_URL,
     },
   },
-  modules: [
+  ssr     : process.env.NODE_ENV === "production" ? true : false,
+  modules : [
     "@nuxt/eslint",
     "@nuxtjs/tailwindcss",
     "@nuxtjs/sitemap",
@@ -68,6 +70,7 @@ export default defineNuxtConfig( {
         return
       }
 
+      // Fetch products for prerendering
       try {
         const response = await fetch( `${baseUrl}/api/products?pageSize=1000` )
         const result = await response.json() as { data: { data: Array<{ slug: string }> } }
@@ -78,6 +81,18 @@ export default defineNuxtConfig( {
       } catch ( error ) {
         console.error( "[prerender] Failed to fetch products:", error )
       }
+
+      // Fetch pages/slugs for prerendering
+      try {
+        const response = await fetch( `${baseUrl}/api/pages?pageSize=1000&published=true&homePage=false` )
+        const result = await response.json() as { data: { data: Array<{ slug: string }> } }
+        const pages = result?.data?.data || []
+
+        pages.forEach( ( item ) => nitroConfig?.prerender?.routes?.push( `/${item.slug}` ) )
+        console.log( `[prerender] Added ${pages.length} page routes` )
+      } catch ( error ) {
+        console.error( "[prerender] Failed to fetch pages:", error )
+      }
     },
   },
   router: {
@@ -87,5 +102,7 @@ export default defineNuxtConfig( {
   },
   plugins: [
     "~/plugins/ValidateSlug.ts",
+    "~/plugins/Section.ts",
+    "~/plugins/Hero.ts",
   ],
 } )

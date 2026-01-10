@@ -108,11 +108,11 @@
     }
 
     a {
-      @apply text-orange hover:underline underline-offset-4;
+      @apply text-orange-400 hover:underline underline-offset-4;
     }
 
     mark {
-      @apply bg-transparent underline decoration-2 underline-offset-4 decoration-orange text-inherit;
+      @apply bg-transparent underline decoration-2 underline-offset-4 decoration-orange-400 text-inherit;
     }
 
     ul {

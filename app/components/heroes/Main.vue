@@ -3,24 +3,24 @@
     <div class="h-full main-container flex flex-col md:flex-row md:items-center gap-8 py-16 md:py-20">
       <div ref="textRef" class="flex flex-col max-w-2xl opacity-0 translate-y-8">
         <div class="flex flex-col justify-center grow">
-          <h1 class="mt-0 text-2xl md:text-5xl mb-4">Solusi Baja Ringan & Galvalum untuk Segala Proyek</h1>
-          <h2 ref="headingRef" class="text-xl md:text-2xl font-normal"></h2>
+          <h1 class="mt-0 text-2xl md:text-5xl mb-4">{{ data.title }}</h1>
+          <h2 v-if="data.subtitle" ref="headingRef" class="text-xl md:text-2xl font-normal">{{ data.subtitle }}</h2>
           <div class="flex items-center gap-6 md:gap-8 mt-8 md:mt-16 flex-wrap">
-            <NuxtLink :to="`https://wa.me/6283144512987`" class="button button-primary">
-              <Icon name="fa7-solid:paper-plane" />
-              Chat WhatsApp
+            <NuxtLink v-if="data.ctaLink" :to="data.ctaLink" class="button button-primary">
+              <Icon v-if="data?.ctaIcon" :name="data?.ctaIcon" />
+              {{ data.ctaText || 'Chat WhatsApp' }}
             </NuxtLink>
-            <NuxtLink :to="`/#katalog`" class="button button-secondary">
-              <Icon name="fa7-solid:images" />
-              Lihat Katalog
+            <NuxtLink v-if="data.secondaryCtaLink" :to="data.secondaryCtaLink" class="button button-secondary">
+              <Icon v-if="data?.secondaryCtaIcon" :name="data?.secondaryCtaIcon" />
+              {{ data.secondaryCtaText || 'Lihat Katalog' }}
             </NuxtLink>
           </div>
         </div>
       </div>
       <div ref="imageRef" class="overflow-hidden aspect-square rounded-2xl relative opacity-0 translate-y-8">
         <img
-          src="/images/sempurna-baja-5.webp"
-          alt="sempurna baja 5"
+          :src="data.image"
+          :alt="data.title"
           width="500"
           height="500"
           loading="eager"
@@ -30,9 +30,9 @@
           <!-- overlay shadow bottom -->
           <div class="absolute w-full bottom-0 bg-gradient-to-t from-[#000]/80 to-transparent h-full z-0">
           </div>
-          <div class="p-4 lg:p-8 relative z-[1] mt-4">
-            <p class="h2 m-0">Sempurna Baja</p>
-            <p class="m-0">Galvalum 0.30</p>
+          <div v-if="data.imageTitle || data.imageSubtitle" class="p-4 lg:p-8 relative z-[1] mt-4">
+            <p v-if="data.imageTitle" class="h2 m-0">{{ data.imageTitle }}</p>
+            <p v-if="data.imageSubtitle" class="m-0">{{ data.imageSubtitle }}</p>
           </div>
         </div>
       </div>
@@ -41,10 +41,14 @@
 </template>
 
 <script setup lang="ts">
+defineProps<{
+  data: Omit<MainHeroBanner, "type">
+  h1: string
+}>()
+
 const containerRef = ref<HTMLElement | null>( null )
 const imageRef = ref<( HTMLElement | null )>( null )
 const textRef = ref<( HTMLElement | null )>( null )
-const headingRef = ref<HTMLElement | null>( null )
 let ctx: gsap.Context | null = null
 
 onMounted( async () => {
@@ -53,9 +57,8 @@ onMounted( async () => {
     // Lazy import GSAP & plugins only in browser
     const gsap = ( await import( "gsap" ) ).default
     const { ScrollTrigger } = await import( "gsap/ScrollTrigger" )
-    const { TextPlugin } = await import( "gsap/TextPlugin" )
 
-    gsap.registerPlugin( ScrollTrigger, TextPlugin )
+    gsap.registerPlugin( ScrollTrigger )
 
     if ( !containerRef.value ) return
     ctx = gsap.context( () => {
@@ -86,15 +89,6 @@ onMounted( async () => {
                 delay      : 0.4,
             }, "<" )
         }
-
-        if ( headingRef.value ) {
-            tl.to( headingRef.value, {
-                duration : 2,
-                text     : "Material lengkap (galvalum, channal, reng, plafon, genteng pasir) + jasa pemasangan profesional. Survey & estimasi kebutuhan tanpa biaya.",
-                ease     : "none",
-            } )
-        }
-
 
     }, ( containerRef.value as HTMLElement ) )
 

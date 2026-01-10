@@ -1,22 +1,18 @@
 <template>
   <section ref="containerRef" class="bg-gray-100">
     <div class="main-container p-20">
-      <h2 class="h1 mt-0 text-center mb-12">Hubungi Kami</h2>
+      <h2 class="h1 mt-0 text-center mb-12">{{ sectionData.title }}</h2>
       <div class="flex flex-col-reverse md:flex-row gap-8 md:gap-0">
         <div class="md:basis-1/2 flex items-center">
           <ul ref="textRef" class="list-none m-0 opacity-0 translate-y-8">
             <li class="flex items-start gap-4">
-              <Icon name="fa7-solid:location-dot" class="size-4 shrink-0 translate-y-0.5" /> Alamat: Dunggubah 2, RT.01/RW.02,Duwet, Kec. Wonosari, Kabupaten Gunungkidul, Daerah Istimewa Yogyakarta.
+              <Icon name="fa7-solid:location-dot" class="size-4 shrink-0 translate-y-0.5" /> Alamat: {{ sectionData.address }}
             </li>
             <li class="flex items-start gap-4">
-              <Icon name="fa7-solid:phone" class="size-4 shrink-0 translate-y-0.5" />Telepon/WA: <b>083144512987</b>
+              <Icon name="fa7-solid:phone" class="size-4 shrink-0 translate-y-0.5" />Telepon/WA: <b>{{ sectionData.phone }}</b>
             </li>
-            <!-- <li class="flex items-center gap-4">
-              <Icon name="fa7-solid:envelope" /> Email: <a
-                href="mailto:ardynugroho3502@gmail.com">Ardynugroho3502@gmail.com</a>
-            </li> -->
             <li class="mt-12">
-              <NuxtLink :to="`https://wa.me/6283144512987`" class="button button-primary">
+              <NuxtLink :to="`https://wa.me/${sectionData.whatsappNumber}`" class="button button-primary">
                 <Icon name="fa7-solid:paper-plane" />
                 Chat WhatsApp
               </NuxtLink>
@@ -28,8 +24,8 @@
             ref="imageRef"
             class="overflow-hidden aspect-square rounded-2xl max-md:max-w-80 relative p-8 mx-auto opacity-0 translate-y-8">
             <img
-              src="@/assets/images/calling-88.svg"
-              alt="Calling"
+              :src="sectionData.image || '/images/calling-88.svg'"
+              :alt="sectionData.title"
               width="500"
               height="500"
               loading="eager"
@@ -42,6 +38,12 @@
 </template>
 
 <script setup lang="ts">
+import type { ContactUsSection } from "~~/shared/types/page"
+
+defineProps<{
+  sectionData: ContactUsSection
+}>()
+
 const containerRef = ref<HTMLElement | null>( null )
 const imageRef = ref<HTMLElement | null>( null )
 const textRef = ref<HTMLElement | null>( null )

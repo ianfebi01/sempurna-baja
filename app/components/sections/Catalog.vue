@@ -1,7 +1,7 @@
 <template>
   <section id="katalog" ref="componentRef">
     <div class="main-container p-20">
-      <h2 class="h1 mt-0 text-center mb-12">Katalog Produk</h2>
+      <h2 class="h1 mt-0 text-center mb-12">{{ sectionData.title }}</h2>
 
       <!-- Loading State -->
       <div
@@ -32,7 +32,7 @@
         </div>
       </div>
       <NuxtLink
-        to="/products"
+        :to="sectionData.showAllLink"
         class="mx-auto mt-12 button button-primary"
         :class="{
           'button-disabled': !uniqueCategoryProducts.length
@@ -47,6 +47,11 @@
 <script lang="ts" setup>
 import type { ApiSuccess } from "~~/shared/types"
 import type { ProductResponse } from "~~/shared/types/product"
+import type { CatalogSection } from "~~/shared/types/page"
+
+defineProps<{
+  sectionData: CatalogSection
+}>()
 
 const baseUrl = useRuntimeConfig().public.baseUrl
 
