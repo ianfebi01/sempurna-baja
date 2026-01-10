@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import type { BodyCopySection } from '~~/shared/types/page'
+import type { BodyCopySection } from "~~/shared/types/page"
 
 const props = defineProps<{
   sectionData: BodyCopySection
 }>()
 
-const containerRef = ref<HTMLElement | null>(null)
+const containerRef = ref<HTMLElement | null>( null )
 
 /**
  * Determine if layout should be 2 columns (when 2 items)
  */
-const isTwoColumns = computed(() => props.sectionData.items.length === 2)
+const isTwoColumns = computed( () => props.sectionData.items.length === 2 )
 </script>
 
 <template>
