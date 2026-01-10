@@ -70,6 +70,7 @@ export default defineNuxtConfig( {
         return
       }
 
+      // Fetch products for prerendering
       try {
         const response = await fetch( `${baseUrl}/api/products?pageSize=1000` )
         const result = await response.json() as { data: { data: Array<{ slug: string }> } }
@@ -79,6 +80,18 @@ export default defineNuxtConfig( {
         console.log( `[prerender] Added ${products.length} product routes` )
       } catch ( error ) {
         console.error( "[prerender] Failed to fetch products:", error )
+      }
+
+      // Fetch pages/slugs for prerendering
+      try {
+        const response = await fetch( `${baseUrl}/api/pages?pageSize=1000&published=true&homePage=false` )
+        const result = await response.json() as { data: { data: Array<{ slug: string }> } }
+        const pages = result?.data?.data || []
+
+        pages.forEach( ( item ) => nitroConfig?.prerender?.routes?.push( `/${item.slug}` ) )
+        console.log( `[prerender] Added ${pages.length} page routes` )
+      } catch ( error ) {
+        console.error( "[prerender] Failed to fetch pages:", error )
       }
     },
   },
