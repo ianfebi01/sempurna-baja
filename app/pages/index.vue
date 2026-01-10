@@ -1,15 +1,38 @@
 <template>
   <div>
-    <HeroesMainHeroes />
+    <ParsersHero v-if="page?.banner" :hero="page?.banner" :h1="page?.banner.title" />
+    <ParsersSection v-if="page?.sections?.length" :sections="page?.sections" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import products from "@/assets/json/products.json"
+import type { ApiSuccess } from "~~/shared/types"
+import qs from "qs"
 
 toRaw( products )
 
-const config = useRuntimeConfig()
+const route = useRoute()
+const config = useRuntimeConfig().public
+const baseUrl = config.baseUrl
+
+const create404 = ( slug: string ) =>
+    createError( {
+        statusCode    : 404,
+        statusMessage : `Page Not Found: ${slug}`,
+        fatal         : true,
+    } )
+
+const query = qs.stringify( { published: false } )
+const { data } = await useAsyncData( `home-page`, () => $fetch<ApiSuccess<Page>>( `${baseUrl}/api/pages/homepage?${query}` ) )
+
+const page = computed( () => data.value?.data )
+
+if ( !page.value ) {
+    console.error( "page not found" )
+    throw create404( "" )
+}
+
 const title = "Sempurna Baja – Baja Ringan & Galvalum"
 const description = "Toko & jasa pasang baja ringan, galvalum, channal, reng, plafon di Wonosari. Survey & estimasi gratis. WA +62 831-4451-2987."
 useHead( {
@@ -37,14 +60,14 @@ useHead( {
     // Open Graph
     { property: "og:title", content: title },
     { property: "og:description", content: description },
-    { property: "og:image", content: `${config.public.siteUrl}/images/sempurna-baja-5.webp` },
-    { property: "og:url", content: `${config.public.siteUrl}/` },
+    { property: "og:image", content: `${config?.siteUrl}/images/sempurna-baja-5.webp` },
+    { property: "og:url", content: `${config?.siteUrl}/` },
     { property: "og:type", content: "website" },
 
     // Twitter
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
-    { name: "twitter:image", content: `${config.public.siteUrl}/images/sempurna-baja-5.webp` },
+    { name: "twitter:image", content: `${config?.siteUrl}/images/sempurna-baja-5.webp` },
     { name: "twitter:card", content: "summary_large_image" },
 
     // Robots
@@ -52,7 +75,7 @@ useHead( {
   ],
 
   link: [
-    { rel: "canonical", href: `${config.public.siteUrl}/` },
+    { rel: "canonical", href: `${config?.siteUrl}/` },
   ],
 
   script: [
@@ -63,7 +86,7 @@ useHead( {
         "@type"       : "LocalBusiness",
         "name"        : "Sempurna Baja",
         "description" : "Toko & jasa pemasangan baja ringan, galvalum, channal, reng, plafon, dan genteng pasir di Wonosari, Gunungkidul.",
-        "image"       : `${config.public.siteUrl}/images/sempurna-baja-5.webp`,
+        "image"       : `${config?.siteUrl}/images/sempurna-baja-5.webp`,
         "telephone"   : "+6283144512987",
         "address"     : {
           "@type"           : "PostalAddress",
@@ -80,7 +103,7 @@ useHead( {
           "itemListElement" : toRaw( products ).map( ( p ) => ( {
             "@type"       : "Product",
             "name"        : p.name,
-            "image"       : `${config.public.siteUrl}${p.image}`,
+            "image"       : `${config?.siteUrl}${p.image}`,
             "description" : p.description,
             "brand"       : p.brand,
             "category"    : p.category,
@@ -89,7 +112,7 @@ useHead( {
               "price"         : p.price.toString(),
               "priceCurrency" : "IDR",
               "availability"  : "https://schema.org/InStock",
-              "url"           : `${config.public.siteUrl}/products/${p.slug}`,
+              "url"           : `${config?.siteUrl}/products/${p.slug}`,
             },
           } ) ),
         },
