@@ -1,4 +1,4 @@
-import sanitize from "../../shared/utils/Sanitize"
+import sanitize from "~~/shared/utils/Sanitize"
 import { Marked, Renderer, type Tokens } from "marked"
 import hljs from "highlight.js"
 import { markedHighlight } from "marked-highlight"
