@@ -28,7 +28,7 @@ if ( !$validateSlug( `${route.params.slug}` ) ) {
     throw create404( `${route.params.slug}` )
 }
 
-const query = qs.stringify( { published: false, homePage: false } )
+const query = qs.stringify( { published: config.prod, homePage: false } )
 const { data } = await useAsyncData( `page-${slug}`, () => $fetch<ApiSuccess<Page>>( `${baseUrl}/api/pages/slug/${slug}?${query}` ) )
 
 const page = computed( () => data.value?.data )

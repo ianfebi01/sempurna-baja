@@ -4,6 +4,7 @@ export default defineNuxtConfig( {
   devtools          : { enabled: true },
   runtimeConfig     : {
     public: {
+      prod: process.env.VERCEL_ENV === "production",
       siteName: process.env.NUXT_SITE_NAME,
       siteUrl:
         process.env.VERCEL_ENV === "production"

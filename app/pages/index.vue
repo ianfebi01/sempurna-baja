@@ -22,7 +22,7 @@ const create404 = ( slug: string ) =>
         fatal         : true,
     } )
 
-const query = qs.stringify( { published: false } )
+const query = qs.stringify( { published: config.prod } )
 const { data } = await useAsyncData( "home-page", () => $fetch<ApiSuccess<Page>>( `${baseUrl}/api/pages/homepage?${query}` ) )
 
 const page = computed( () => data.value?.data )
