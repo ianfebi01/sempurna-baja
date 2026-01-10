@@ -125,7 +125,51 @@ import { useQuery } from "@tanstack/vue-query"
 import type { ApiSuccess } from "~~/shared/types"
 import type { ProductResponse } from "~~/shared/types/product"
 
-const baseUrl = useRuntimeConfig().public.baseUrl
+const config = useRuntimeConfig().public
+const baseUrl = config.baseUrl
+
+// SEO Meta
+const seoTitle = "Produk Baja Ringan & Galvalum | Sempurna Baja"
+const seoDescription = "Katalog lengkap produk baja ringan, galvalum, channal, reng, plafon, dan genteng pasir di Wonosari. Harga terbaik, kualitas terjamin."
+const seoImage = `${config.siteUrl}/images/sempurna-baja-5.webp`
+
+useSeoMeta( {
+    title              : seoTitle,
+    description        : seoDescription,
+    ogTitle            : seoTitle,
+    ogDescription      : seoDescription,
+    ogImage            : seoImage,
+    ogUrl              : `${config.siteUrl}/products`,
+    ogType             : "website",
+    twitterTitle       : seoTitle,
+    twitterDescription : seoDescription,
+    twitterImage       : seoImage,
+    twitterCard        : "summary_large_image",
+    robots             : "index, follow",
+} )
+
+useHead( {
+    htmlAttrs : { lang: "id" },
+    link      : [{ rel: "canonical", href: `${config.siteUrl}/products` }],
+    script    : [
+        {
+            type      : "application/ld+json",
+            innerHTML : JSON.stringify( {
+                "@context"    : "https://schema.org",
+                "@type"       : "CollectionPage",
+                "name"        : "Produk Sempurna Baja",
+                "description" : seoDescription,
+                "url"         : `${config.siteUrl}/products`,
+                "image"       : seoImage,
+                "publisher"   : {
+                    "@type"     : "LocalBusiness",
+                    "name"      : "Sempurna Baja",
+                    "telephone" : "+6283144512987",
+                },
+            } ),
+        },
+    ],
+} )
 
 const filters = reactive( {
   category : [] as string[],

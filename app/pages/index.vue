@@ -12,7 +12,6 @@ import qs from "qs"
 
 toRaw( products )
 
-const route = useRoute()
 const config = useRuntimeConfig().public
 const baseUrl = config.baseUrl
 
@@ -24,7 +23,7 @@ const create404 = ( slug: string ) =>
     } )
 
 const query = qs.stringify( { published: false } )
-const { data } = await useAsyncData( `home-page`, () => $fetch<ApiSuccess<Page>>( `${baseUrl}/api/pages/homepage?${query}` ) )
+const { data } = await useAsyncData( "home-page", () => $fetch<ApiSuccess<Page>>( `${baseUrl}/api/pages/homepage?${query}` ) )
 
 const page = computed( () => data.value?.data )
 
@@ -33,93 +32,81 @@ if ( !page.value ) {
     throw create404( "" )
 }
 
-const title = "Sempurna Baja – Baja Ringan & Galvalum"
-const description = "Toko & jasa pasang baja ringan, galvalum, channal, reng, plafon di Wonosari. Survey & estimasi gratis. WA +62 831-4451-2987."
+// SEO Meta
+const seoTitle = "Sempurna Baja – Baja Ringan & Galvalum"
+const seoDescription = "Toko & jasa pasang baja ringan, galvalum, channal, reng, plafon di Wonosari. Survey & estimasi gratis. WA +62 831-4451-2987."
+const seoImage = `${config.siteUrl}/images/sempurna-baja-5.webp`
+const seoKeywords = [
+    "baja ringan wonosari",
+    "galvalum gunungkidul",
+    "jasa pasang atap wonosari",
+    "channal c75",
+    "reng baja ringan",
+    "genteng pasir",
+    "plafon wonosari",
+    "toko baja ringan",
+].join( ", " )
+
+useSeoMeta( {
+    title              : seoTitle,
+    description        : seoDescription,
+    keywords           : seoKeywords,
+    ogTitle            : seoTitle,
+    ogDescription      : seoDescription,
+    ogImage            : seoImage,
+    ogUrl              : `${config.siteUrl}/`,
+    ogType             : "website",
+    twitterTitle       : seoTitle,
+    twitterDescription : seoDescription,
+    twitterImage       : seoImage,
+    twitterCard        : "summary_large_image",
+    robots             : "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1",
+} )
+
 useHead( {
-  title : title,
-  meta  : [
-    // Basic
-    {
-      name    : "description",
-      content : description,
-    },
-    {
-      name    : "keywords",
-      content : [
-        "baja ringan wonosari",
-        "galvalum gunungkidul",
-        "jasa pasang atap wonosari",
-        "channal c75",
-        "reng baja ringan",
-        "genteng pasir",
-        "plafon wonosari",
-        "toko baja ringan",
-      ].join( ", " ),
-    },
-
-    // Open Graph
-    { property: "og:title", content: title },
-    { property: "og:description", content: description },
-    { property: "og:image", content: `${config?.siteUrl}/images/sempurna-baja-5.webp` },
-    { property: "og:url", content: `${config?.siteUrl}/` },
-    { property: "og:type", content: "website" },
-
-    // Twitter
-    { name: "twitter:title", content: title },
-    { name: "twitter:description", content: description },
-    { name: "twitter:image", content: `${config?.siteUrl}/images/sempurna-baja-5.webp` },
-    { name: "twitter:card", content: "summary_large_image" },
-
-    // Robots
-    { name: "robots", content: "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" },
-  ],
-
-  link: [
-    { rel: "canonical", href: `${config?.siteUrl}/` },
-  ],
-
-  script: [
-    {
-      type      : "application/ld+json",
-      innerHTML : JSON.stringify( {
-        "@context"    : "https://schema.org",
-        "@type"       : "LocalBusiness",
-        "name"        : "Sempurna Baja",
-        "description" : "Toko & jasa pemasangan baja ringan, galvalum, channal, reng, plafon, dan genteng pasir di Wonosari, Gunungkidul.",
-        "image"       : `${config?.siteUrl}/images/sempurna-baja-5.webp`,
-        "telephone"   : "+6283144512987",
-        "address"     : {
-          "@type"           : "PostalAddress",
-          "streetAddress"   : "Dunggubah 2, RT.01/RW.02, Duwet",
-          "addressLocality" : "Wonosari",
-          "addressRegion"   : "Daerah Istimewa Yogyakarta",
-          "addressCountry"  : "ID",
+    htmlAttrs : { lang: "id" },
+    link      : [{ rel: "canonical", href: `${config.siteUrl}/` }],
+    script    : [
+        {
+            type      : "application/ld+json",
+            innerHTML : JSON.stringify( {
+                "@context"    : "https://schema.org",
+                "@type"       : "LocalBusiness",
+                "name"        : "Sempurna Baja",
+                "description" : "Toko & jasa pemasangan baja ringan, galvalum, channal, reng, plafon, dan genteng pasir di Wonosari, Gunungkidul.",
+                "image"       : seoImage,
+                "telephone"   : "+6283144512987",
+                "address"     : {
+                    "@type"           : "PostalAddress",
+                    "streetAddress"   : "Dunggubah 2, RT.01/RW.02, Duwet",
+                    "addressLocality" : "Wonosari",
+                    "addressRegion"   : "Daerah Istimewa Yogyakarta",
+                    "addressCountry"  : "ID",
+                },
+                "areaServed"      : "Gunungkidul, Yogyakarta",
+                "priceRange"      : "IDR 20000-90000",
+                "hasOfferCatalog" : {
+                    "@type"           : "OfferCatalog",
+                    "name"            : "Produk Baja Ringan & Galvalum",
+                    "itemListElement" : toRaw( products ).map( ( p ) => ( {
+                        "@type"       : "Product",
+                        "name"        : p.name,
+                        "image"       : `${config.siteUrl}${p.image}`,
+                        "description" : p.description,
+                        "brand"       : p.brand,
+                        "category"    : p.category,
+                        "offers"      : {
+                            "@type"         : "Offer",
+                            "price"         : p.price.toString(),
+                            "priceCurrency" : "IDR",
+                            "availability"  : "https://schema.org/InStock",
+                            "url"           : `${config.siteUrl}/products/${p.slug}`,
+                        },
+                    } ) ),
+                },
+            } ),
         },
-        "areaServed"      : "Gunungkidul, Yogyakarta",
-        "priceRange"      : "IDR 20000-90000",
-        "hasOfferCatalog" : {
-          "@type"           : "OfferCatalog",
-          "name"            : "Produk Baja Ringan & Galvalum",
-          "itemListElement" : toRaw( products ).map( ( p ) => ( {
-            "@type"       : "Product",
-            "name"        : p.name,
-            "image"       : `${config?.siteUrl}${p.image}`,
-            "description" : p.description,
-            "brand"       : p.brand,
-            "category"    : p.category,
-            "offers"      : {
-              "@type"         : "Offer",
-              "price"         : p.price.toString(),
-              "priceCurrency" : "IDR",
-              "availability"  : "https://schema.org/InStock",
-              "url"           : `${config?.siteUrl}/products/${p.slug}`,
-            },
-          } ) ),
-        },
-      },
-      ),
-    },
-  ],
+    ],
 } )
 
 
