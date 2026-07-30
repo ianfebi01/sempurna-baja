@@ -95,7 +95,6 @@ interface Props {
 }
 const props = defineProps<Props>()
 const emit = defineEmits( ["closeModal"] )
-const config = useRuntimeConfig()
 
 const shareUrl = computed( () => props.productUrl )
 const copied = ref( false )
@@ -104,19 +103,15 @@ const shareLinks = computed( () => {
     const title = props.productName
     const url = props.productUrl
 
-    const message = `Cek produk ini di ${config.public?.siteName || "toko kami"}:
-${title}
-
-Lihat detail di sini:
-${url}
-
-Segera pesan sebelum kehabisan!`
+    const message = `Halo, saya tertarik ingin memesan produk ${title}.
+Apakah masih tersedia?`
+    const shareMessage = `${message}\n\nLihat detail di sini:\n${url}`
 
     return [
         {
             label : "WhatsApp",
             icon  : "fa6-brands:whatsapp",
-            url   : `https://wa.me/?text=${encodeURIComponent( message )}`,
+            url   : `https://wa.me/?text=${encodeURIComponent( shareMessage )}`,
         },
         {
             label : "Facebook",
