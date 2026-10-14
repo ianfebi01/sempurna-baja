@@ -126,7 +126,7 @@ const uniqueCategoryProducts = computed( () => uniqueCategoryData.value?.data?.d
 // WhatsApp link
 const whatsappLink = computed( () => {
   const baseUrl = "https://wa.me/6283144512987"
-  const message = `Halo, saya tertarik ingin memesan produk ${product.value?.name}${product.value?.brand ? ` dari merk ${product.value.brand}` : ""
+  const message = `Halo, saya tertarik ingin memesan produk ${product.value?.name}${product.value?.brand?.name ? ` dari merk ${product.value.brand.name}` : ""
     }.\nApakah masih tersedia?`
   return `${baseUrl}?text=${encodeURIComponent( message )}`
 } )
@@ -145,7 +145,7 @@ const isOpenShare = ref<boolean>( false )
 
 
 // SEO
-const title = `${product.value?.name} - ${product.value?.brand} | Sempurna Baja`
+const title = `${product.value?.name} - ${product.value?.brand?.name} | Sempurna Baja`
 const sitename = config.siteName
 const desc = product.value?.description
 useHead( {
@@ -178,7 +178,7 @@ useHead( {
         "description" : product.value.description,
         "brand"       : {
           "@type" : "Brand",
-          "name"  : product.value.brand,
+          "name"  : product.value.brand?.name || "",
         },
         "sku"      : product.value.slug,
         "category" : product.value.category,

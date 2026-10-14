@@ -142,6 +142,8 @@ export interface PageListItem {
   name: string
   slug: string
   isPublished: boolean
+  isHomePage?: boolean
+  banner?: Banner
   createdAt: string
   updatedAt: string
 }

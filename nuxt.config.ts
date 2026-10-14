@@ -4,7 +4,7 @@ export default defineNuxtConfig( {
   devtools          : { enabled: true },
   runtimeConfig     : {
     public: {
-      prod     : process.env.VERCEL_ENV === "production",
+      prod     : process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production",
       siteName : process.env.NUXT_SITE_NAME,
       siteUrl:
         process.env.VERCEL_ENV === "production"
@@ -27,6 +27,11 @@ export default defineNuxtConfig( {
   eslint: {
     checker: true,
   },
+  sitemap: {
+    sources: [
+      "/api/__sitemap__/urls",
+    ],
+  },
   tailwindcss: {
     exposeConfig: true,
   },
@@ -46,13 +51,16 @@ export default defineNuxtConfig( {
         : process.env.VERCEL_ENV === "preview"
           ? `https://${process.env.VERCEL_URL}` // Vercel preview deployments
           : process.env.NUXT_SITE_URL || "http://localhost:3000", // local or vercel dev,
-    indexable: process.env.NODE_ENV === "production",
+    indexable: process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production",
   },
   nitro: {
     prerender: {
       routes: [
         "/",
         "/products",
+        "/privacy-policy",
+        "/sitemap.xml",
+        "/robots.txt",
       ],
       failOnError: true,
     },

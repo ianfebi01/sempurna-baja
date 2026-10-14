@@ -8,6 +8,8 @@ export type Product = {
   price: number
   unit: string
   brand: ObjectId
+  createdAt?: string
+  updatedAt?: string
 }
 
 export type ProductResponse = {
