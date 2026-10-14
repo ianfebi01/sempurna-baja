@@ -46,7 +46,7 @@ const seoKeywords = [
     "plafon wonosari",
     "toko baja ringan",
 ].join( ", " )
-const siteName = config.siteName || 'Sempurna Baja'
+const siteName = config.siteName || "Sempurna Baja"
 
 useSeoMeta( {
     title              : seoTitle,

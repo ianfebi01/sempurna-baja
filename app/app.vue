@@ -14,9 +14,9 @@ const siteName = config.public.siteName
 const title = siteName || "Sempurna Baja – Baja Ringan & Galvalum"
 const description = "Toko & jasa pasang baja ringan, galvalum, channal, reng, plafon di Wonosari. Survey & estimasi gratis. WA +62 831-4451-2987."
 
-useSeoMeta({
-  ogSiteName: siteName
-})
+useSeoMeta( {
+  ogSiteName: siteName,
+} )
 
 useHead( {
   htmlAttrs: {
